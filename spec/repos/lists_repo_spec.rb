@@ -30,4 +30,15 @@ describe ListMore::Repositories::ListsRepo do
     expect(lists.count).to eq list_count db
   end
 
+  it "saves a list to the database" do
+    user_id = ListMore::Repositories::UsersRepo.get_user_id db, 'Ramses'
+    list_data = {
+                  :name => "Video Games",
+                  :user_id => user_id
+                }
+    list = ListMore::Repositories::ListsRepo.save db, list_data
+    expect(list['name']).to eq "Video Games"
+    expect(list['user_id']).to eq user_id
+  end
+
 end
