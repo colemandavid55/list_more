@@ -16,6 +16,15 @@ module ListMore
         result.first
       end
 
+      def self.get_user_id db, username
+        sql = %q[
+          SELECT id FROM users
+          WHERE username = $1
+          ]
+        result = db.exec(sql, [username])
+        result.first['id']
+      end
+      
       def self.update
       end
 
