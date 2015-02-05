@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'pry-byebug'
 
 describe ListMore::Repositories::UsersRepo do
 
@@ -48,6 +49,15 @@ describe ListMore::Repositories::UsersRepo do
 
     expect(username).to eq user['username']
     expect(username).to eq "Ozymandias"
+  end
+
+  it "can delete a user by username" do
+    expect(user_count db).to eq 0
+    user = ListMore::Repositories::UsersRepo.save db, {:username => "Ozymandias", :password => "egypt"}
+    expect(user_count db).to eq 1
+
+    ListMore::Repositories::UsersRepo.destroy db, {"username" => "Ozymandias"}
+    expect(user_count db).to eq 0
   end
 
 end

@@ -34,7 +34,20 @@ module ListMore
         result.first['username']
       end
 
-      def self.delete
+      def self.destroy db, user_data
+        sql, param = user_data['id'] ?
+          [%q[
+            DELETE FROM users
+            WHERE id = $1
+            ],
+          user_data['id']]
+          :
+          [%q[
+            DELETE FROM users
+            WHERE username = $1
+            ],
+          user_data['username']]
+          db.exec(sql, [param])
       end
     
     end
