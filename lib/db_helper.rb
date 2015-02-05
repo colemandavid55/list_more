@@ -11,7 +11,7 @@ module ListMore
         db.exec <<-SQL
           CREATE TABLE IF NOT EXISTS users(
               id SERIAL PRIMARY KEY
-              , username VARCHAR
+              , username VARCHAR UNIQUE
               , password VARCHAR
               );
           CREATE TABLE IF NOT EXISTS lists(
@@ -44,9 +44,9 @@ module ListMore
 
       def self.drop_tables db
         db.exec <<-SQL
-          DROP TABLE users;
-          DROP TABLE lists;
           DROP TABLE items;
+          DROP TABLE lists;
+          DROP TABLE users;
         SQL
       end
 
