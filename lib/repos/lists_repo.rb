@@ -12,9 +12,10 @@ module ListMore
         result.first
       end
 
-      def self.update db, list_data
-        sql = %q[UPDATE lists SET name = $1 WHERE user_id = $2]
-        result = db.exec(sql, [list_data[:name], list_data[:user_id]])
+      def self.update db, list_data, name_new
+        sql = %q[UPDATE lists SET name = $1 WHERE user_id = $2 and name = $3 RETURNING *]
+        result = db.exec(sql, [name_new, list_data[:user_id], list_data[:name]])
+        result.first
       end
 
     end

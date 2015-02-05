@@ -41,4 +41,16 @@ describe ListMore::Repositories::ListsRepo do
     expect(list['user_id']).to eq user_id
   end
 
+  it "updates the name of an existing list" do
+    user_id = ListMore::Repositories::UsersRepo.get_user_id db, 'Ramses'
+    list_data = {
+                  :name => "Video Games",
+                  :user_id => user_id
+                }
+    ListMore::Repositories::ListsRepo.save db, list_data
+    name_new = "Video Games part 1"
+    list = ListMore::Repositories::ListsRepo.update db, list_data, name_new
+    expect(list['name']).to eq "Video Games part 1"
+  end
+
 end
