@@ -18,6 +18,12 @@ module ListMore
         result.first
       end
 
+      def self.get_list_id db, list_name
+        sql = %q[SELECT id FROM lists WHERE name = $1]
+        result = db.exec(sql, [list_name])
+        result.first['id']
+      end
+
     end
   end
 end

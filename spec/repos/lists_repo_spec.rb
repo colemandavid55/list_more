@@ -53,4 +53,15 @@ describe ListMore::Repositories::ListsRepo do
     expect(list['name']).to eq "Video Games part 1"
   end
 
+  it "gets the id of a list by name" do
+    user_id = ListMore::Repositories::UsersRepo.get_user_id db, 'Ramses'
+    list_data = {
+                  :name => "Card Games",
+                  :user_id => user_id
+                }
+    list = ListMore::Repositories::ListsRepo.save db, list_data
+    list_id = ListMore::Repositories::ListsRepo.get_list_id db, list['name']
+    expect(list_id).to eq list['id']
+  end
+
 end

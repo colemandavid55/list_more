@@ -16,7 +16,7 @@ module ListMore
               );
           CREATE TABLE IF NOT EXISTS lists(
               id SERIAL PRIMARY KEY
-              , name VARCHAR
+              , name VARCHAR UNIQUE
               , user_id INTEGER REFERENCES users(id)
                 ON DELETE CASCADE
                 ON UPDATE CASCADE
