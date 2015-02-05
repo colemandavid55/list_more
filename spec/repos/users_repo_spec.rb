@@ -60,4 +60,13 @@ describe ListMore::Repositories::UsersRepo do
     expect(user_count db).to eq 0
   end
 
+  it "can delete a user by id" do
+    expect(user_count db).to eq 0
+    user = ListMore::Repositories::UsersRepo.save db, {:username => "Ozymandias", :password => "egypt"}
+    expect(user_count db).to eq 1
+
+    ListMore::Repositories::UsersRepo.destroy db, {"id" => user['id']}
+    expect(user_count db).to eq 0
+  end
+
 end
