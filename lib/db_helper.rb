@@ -50,13 +50,13 @@ module ListMore
         SQL
       end
 
-      def self.seed_tables db
-        db.exec <<-SQL
-
-        SQL
+      def self.seed_users_table db
+        db.exec("INSERT INTO users (username, password) VALUES ($1, $2)", ["Ramses", "pitbull"])
+        db.exec("INSERT INTO users (username, password) VALUES ($1, $2)", ["Daisy", "collie"])
       end
 
   end
 end
 
 require_relative 'repos/users_repo'
+require_relative 'repos/lists_repo'
