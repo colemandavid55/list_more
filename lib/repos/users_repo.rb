@@ -24,8 +24,14 @@ module ListMore
         result = db.exec(sql, [username])
         result.first['id']
       end
-      
-      def self.update
+
+      def self.get_username db, user_id
+        sql = %q[
+          SELECT username FROM users
+          WHERE id = $1
+          ]
+        result = db.exec(sql, [user_id])
+        result.first['username']
       end
 
       def self.delete

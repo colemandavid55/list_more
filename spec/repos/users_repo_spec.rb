@@ -42,4 +42,12 @@ describe ListMore::Repositories::UsersRepo do
     expect(user_id).to eq user['id']
   end
 
+  it "can find a username by id" do
+    user = ListMore::Repositories::UsersRepo.save db, {:username => "Ozymandias", :password => "egypt"}
+    username = ListMore::Repositories::UsersRepo.get_username db, user['id']
+
+    expect(username).to eq user['username']
+    expect(username).to eq "Ozymandias"
+  end
+
 end
