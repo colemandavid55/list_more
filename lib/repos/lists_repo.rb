@@ -38,7 +38,15 @@ module ListMore
         result.entries
       end
 
-      def self.destroy_list db, user_id, list_id
+      def self.get_user_shared_lists db, user_id
+      end
+
+      def self.destroy_list db, list_data
+        sql = %q[DELETE FROM lists
+                WHERE name = $1 and
+                user_id = $2
+                ]
+        db.exec(sql, [list_data['name'], list_data['user_id']])
       end
 
     end

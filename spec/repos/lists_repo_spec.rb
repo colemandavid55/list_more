@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'pry-byebug'
+require 'pg'
 
 describe ListMore::Repositories::ListsRepo do
 
@@ -94,9 +95,25 @@ describe ListMore::Repositories::ListsRepo do
 
     lists = ListMore::Repositories::ListsRepo.get_user_owner_lists db, user_id
     expect(lists).to be_a Array
-    
+
     list_array = lists.map{ |list| list['name'] }
     expect(list_array).to include "Strategy Games", "Fantasy Games"
+  end
+
+  it "deletes a list" do
+    user_id = ListMore::Repositories::UsersRepo.get_user_id db, 'Ramses'
+    list_data = {
+                  :name => "Math Games",
+                  :user_id => user_id
+                }
+    ListMore::Repositories::ListsRepo.save db, list_data
+    expect(list_count db).to eq 1
+
+    # Deleting a record from the db requires :name to be 'name' 
+    
+    ListMore::Repositories::ListsRepo.destroy_list db, {"name" => "Math Games", "user_id" => user_id}
+    binding.pry
+    expect(list_count db).to eq 0
   end
 
 
