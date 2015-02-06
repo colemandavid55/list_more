@@ -24,6 +24,15 @@ module ListMore
         result.first['id']
       end
 
+      def self.share_list db, other_user_id, list_id
+        sql = %q[INSERT INTO shared_lists (user_id, list_id) VALUES ($1, $2) RETURNING *]
+        result = db.exec(sql, [other_user_id, list_id])
+        result.first
+      end
+
+      def self.destroy_list db, user_id, list_id
+      end
+
     end
   end
 end

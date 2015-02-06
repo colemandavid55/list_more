@@ -31,6 +31,15 @@ module ListMore
                 ON DELETE CASCADE
                 ON UPDATE CASCADE
               );
+          CREATE TABLE IF NOT EXISTS shared_lists(
+              id SERIAL PRIMARY KEY
+              , user_id INTEGER REFERENCES users(id)
+                ON DELETE CASCADE
+                ON UPDATE CASCADE
+              , list_id INTEGER REFERENCES lists(id)
+                ON DELETE CASCADE
+                ON UPDATE CASCADE
+              );
           SQL
       end
 
@@ -38,15 +47,17 @@ module ListMore
         db.exec <<-SQL
           DELETE FROM users;
           DELETE FROM lists;
+          DELETE FROM shared_lists;
           DELETE FROM items;
         SQL
       end
 
       def self.drop_tables db
         db.exec <<-SQL
-          DROP TABLE items;
-          DROP TABLE lists;
-          DROP TABLE users;
+          DROP TABLE users CASCADE;
+          DROP TABLE lists CASCADE;
+          DROP TABLE shared_lists CASCADE;
+          DROP TABLE items CASCADE;
         SQL
       end
 

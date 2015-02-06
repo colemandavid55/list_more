@@ -64,4 +64,20 @@ describe ListMore::Repositories::ListsRepo do
     expect(list_id).to eq list['id']
   end
 
+  it "allows a list to be saved to the shared_lists table" do
+    user_id_owner = ListMore::Repositories::UsersRepo.get_user_id db, 'Ramses'
+    user_id_share = ListMore::Repositories::UsersRepo.get_user_id db, 'Daisy'
+    list_data = {
+                  :name => "Board Games",
+                  :user_id => user_id_owner
+                }
+    list = ListMore::Repositories::ListsRepo.save db, list_data
+    list_id = ListMore::Repositories::ListsRepo.get_list_id db, list['name']
+    shared_list = ListMore::Repositories::ListsRepo.share_list db, user_id_share, list_id
+    
+    expect(shared_list['user_id']).to eq user_id_share
+    expect(shared_list['list_id']).to eq list_id
+  end
+
+
 end
