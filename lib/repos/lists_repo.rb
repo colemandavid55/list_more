@@ -30,6 +30,14 @@ module ListMore
         result.first
       end
 
+      def self.get_user_owner_lists db, user_id
+        sql = %q[SELECT * FROM lists
+                WHERE user_id = $1
+                ]
+        result = db.exec(sql, [user_id])
+        result.entries
+      end
+
       def self.destroy_list db, user_id, list_id
       end
 

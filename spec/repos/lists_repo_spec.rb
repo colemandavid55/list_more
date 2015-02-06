@@ -79,5 +79,25 @@ describe ListMore::Repositories::ListsRepo do
     expect(shared_list['list_id']).to eq list_id
   end
 
+  it "gets all lists owned by a specific user" do
+    user_id = ListMore::Repositories::UsersRepo.get_user_id db, 'Ramses'
+    list_data_1 = {
+                    :name => "Strategy Games",
+                    :user_id => user_id
+                  }
+    list_data_2 = {
+                    :name => "Fantasy Games",
+                    :user_id => user_id
+                  }
+    list_1 = ListMore::Repositories::ListsRepo.save db, list_data_1
+    list_2 = ListMore::Repositories::ListsRepo.save db, list_data_2
+
+    lists = ListMore::Repositories::ListsRepo.get_user_owner_lists db, user_id
+    expect(lists).to be_a Array
+    
+    list_array = lists.map{ |list| list['name'] }
+    expect(list_array).to include "Strategy Games", "Fantasy Games"
+  end
+
 
 end
