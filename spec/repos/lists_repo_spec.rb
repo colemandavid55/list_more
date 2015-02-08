@@ -4,117 +4,74 @@ require 'pg'
 
 describe ListMore::Repositories::ListsRepo do
 
-  let(:db) { ListMore::Repositories.create_db_connection('listmore_test') }
+  let(:dbhelper) { ListMore::Repositories::DBHelper.new 'listmore_test' }
+  let(:user_1) { ListMore::Entities::User.new({:username => "Ramses", :password_digest => "pitbull"})}
+  let(:user_2) { ListMore::Entities::User.new({:username => "Daisy", :password_digest => "collie"})}
+  
 
   before(:each) do
-    ListMore::Repositories.drop_tables db
-    ListMore::Repositories.create_tables db
-    ListMore::Repositories.seed_users_table db
-    # usernames => 'Ramses', 'Daisy'
-  end
-
-  def list_count db
-    db.exec("SELECT COUNT (*) FROM lists")[0]["count"].to_i
-  end
-
-  it "gets all lists" do
-    expect(list_count db).to eq 0
-    user_id_1 = ListMore::Repositories::UsersRepo.get_user_id db, 'Ramses'
-    user_id_2 = ListMore::Repositories::UsersRepo.get_user_id db, 'Daisy'
-    db.exec("INSERT INTO lists (name, user_id) VALUES ($1, $2)", ["Video Games", user_id_1])
-    db.exec("INSERT INTO lists (name, user_id) VALUES ($1, $2)", ["Card Games", user_id_2])
-    expect(list_count db).to eq 2
-
-    lists = ListMore::Repositories::ListsRepo.all db 
-    expect(lists).to be_a Array
-    expect(lists.count).to eq 2
-    expect(lists.count).to eq list_count db
+    dbhelper.drop_tables
+    dbhelper.create_tables
   end
 
   it "saves a list to the database" do
-    user_id = ListMore::Repositories::UsersRepo.get_user_id db, 'Ramses'
-    list_data = {
-                  :name => "Video Games",
-                  :user_id => user_id
-                }
-    list = ListMore::Repositories::ListsRepo.save db, list_data
-    expect(list['name']).to eq "Video Games"
-    expect(list['user_id']).to eq user_id
+
+    user = ListMore.users_repo.save user_1
+    list_1 = ListMore::Entities::List.new({:name => "First List", :user_id => user.id})
+
+
+    list = ListMore.lists_repo.save list_1
+
+    expect(list.name).to eq "First List"
+    expect(list.user_id).to eq "1"
+    expect(list.user_id.to_i).to be_a Integer
+    expect(list.id.to_i).to be_a Integer
   end
 
-  it "updates the name of an existing list" do
-    user_id = ListMore::Repositories::UsersRepo.get_user_id db, 'Ramses'
-    list_data = {
-                  :name => "Video Games",
-                  :user_id => user_id
-                }
-    ListMore::Repositories::ListsRepo.save db, list_data
-    name_new = "Video Games part 1"
-    list = ListMore::Repositories::ListsRepo.update db, list_data, name_new
-    expect(list['name']).to eq "Video Games part 1"
-  end
+  it "gets all lists" do
+    user = ListMore.users_repo.save user_1
+    list_1 = ListMore::Entities::List.new({:name => "First List", :user_id => user.id})
+    list_2 = ListMore::Entities::List.new({:name => "Second List", :user_id => user.id})
 
-  it "gets the id of a list by name" do
-    user_id = ListMore::Repositories::UsersRepo.get_user_id db, 'Ramses'
-    list_data = {
-                  :name => "Card Games",
-                  :user_id => user_id
-                }
-    list = ListMore::Repositories::ListsRepo.save db, list_data
-    list_id = ListMore::Repositories::ListsRepo.get_list_id db, list['name']
-    expect(list_id).to eq list['id']
-  end
+    ListMore.lists_repo.save list_1
+    ListMore.lists_repo.save list_2
 
-  it "allows a list to be saved to the shared_lists table" do
-    user_id_owner = ListMore::Repositories::UsersRepo.get_user_id db, 'Ramses'
-    user_id_share = ListMore::Repositories::UsersRepo.get_user_id db, 'Daisy'
-    list_data = {
-                  :name => "Board Games",
-                  :user_id => user_id_owner
-                }
-    list = ListMore::Repositories::ListsRepo.save db, list_data
-    list_id = ListMore::Repositories::ListsRepo.get_list_id db, list['name']
-    shared_list = ListMore::Repositories::ListsRepo.share_list db, user_id_share, list_id
-    
-    expect(shared_list['user_id']).to eq user_id_share
-    expect(shared_list['list_id']).to eq list_id
-  end
-
-  it "gets all lists owned by a specific user" do
-    user_id = ListMore::Repositories::UsersRepo.get_user_id db, 'Ramses'
-    list_data_1 = {
-                    :name => "Strategy Games",
-                    :user_id => user_id
-                  }
-    list_data_2 = {
-                    :name => "Fantasy Games",
-                    :user_id => user_id
-                  }
-    list_1 = ListMore::Repositories::ListsRepo.save db, list_data_1
-    list_2 = ListMore::Repositories::ListsRepo.save db, list_data_2
-
-    lists = ListMore::Repositories::ListsRepo.get_user_owner_lists db, user_id
+    lists = ListMore.lists_repo.all
     expect(lists).to be_a Array
-
-    list_array = lists.map{ |list| list['name'] }
-    expect(list_array).to include "Strategy Games", "Fantasy Games"
+    expect(lists.count).to eq 2
   end
 
-  it "deletes a list" do
-    user_id = ListMore::Repositories::UsersRepo.get_user_id db, 'Ramses'
-    list_data = {
-                  :name => "Math Games",
-                  :user_id => user_id
-                }
-    ListMore::Repositories::ListsRepo.save db, list_data
-    expect(list_count db).to eq 1
 
-    # Deleting a record from the db requires :name to be 'name' 
-    
-    ListMore::Repositories::ListsRepo.destroy_list db, {"name" => "Math Games", "user_id" => user_id}
-    binding.pry
-    expect(list_count db).to eq 0
+  it "updates an existing list" do
+    user = ListMore.users_repo.save user_1
+    list_1 = ListMore::Entities::List.new({:name => "First List", :user_id => user.id})
+    saved_list = ListMore.lists_repo.save list_1
+    saved_list.name = "Second List"
+
+    list_updated = ListMore.lists_repo.update saved_list
+    expect(list_updated.name).to eq "Second List"
   end
 
+  it "gets a user's lists" do
+    user = ListMore.users_repo.save user_1
+    list_1 = ListMore::Entities::List.new({:name => "First List", :user_id => user.id})
+    list_2 = ListMore::Entities::List.new({:name => "Second List", :user_id => user.id})
+    ListMore.lists_repo.save list_1
+    ListMore.lists_repo.save list_2
+    lists = ListMore.lists_repo.get_user_lists user
+
+    expect(lists).to be_a Array
+    expect(lists.count).to eq 2
+    expect(lists.map{|list| list.name}).to include "First List", "Second List"
+  end
+
+  it "destroys a list" do
+    user = ListMore.users_repo.save user_1
+    list_1 = ListMore::Entities::List.new({:name => "First List", :user_id => user.id})
+    list = ListMore.lists_repo.save list_1
+    ListMore.lists_repo.destroy_list list
+    result = ListMore.lists_repo.all
+    expect(result).to eq []
+  end
 
 end
