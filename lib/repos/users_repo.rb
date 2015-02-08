@@ -3,7 +3,8 @@ module ListMore
     class UsersRepo
 
       def self.all db
-        db.exec('SELECT * FROM users').entries
+        result = db.exec('SELECT * FROM users').entries
+        result.map{ |entry| build_user entry }
       end   
 
       def self.save db, user_data
@@ -13,25 +14,25 @@ module ListMore
           RETURNING *
           ]
         result = db.exec(sql, [user_data[:username], user_data[:password]])
-        result.first
+        build_user result.first
       end
 
-      def self.get_user_id db, username
+      def self.get_user_by_id db, id
         sql = %q[
-          SELECT id FROM users
+          SELECT * FROM users
+          WHERE id = $1
+          ]
+        result = db.exec(sql, [id])
+        build_user result.first
+      end
+
+      def self.get_user_by_username db, username
+        sql = %q[
+          SELECT * FROM users
           WHERE username = $1
           ]
         result = db.exec(sql, [username])
-        result.first['id']
-      end
-
-      def self.get_username db, user_id
-        sql = %q[
-          SELECT username FROM users
-          WHERE id = $1
-          ]
-        result = db.exec(sql, [user_id])
-        result.first['username']
+        build_user result.first
       end
 
       def self.destroy db, user_data
@@ -48,6 +49,10 @@ module ListMore
             ],
           user_data['username']]
           db.exec(sql, [param])
+      end
+
+      def build_user data
+        ListMore::Entities::User.new data
       end
     
     end
