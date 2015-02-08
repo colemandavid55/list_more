@@ -14,7 +14,8 @@ module ListMore
           RETURNING *
           ]
         result = db.exec(sql, [user.username, user.password_digest])
-        build_user result.first
+        user.id = result.first['id']
+        user
       end
 
       def find_by_id id
@@ -32,7 +33,11 @@ module ListMore
           WHERE username = $1
           ]
         result = db.exec(sql, [username])
-        build_user result.first
+        if result.first
+          build_user result.first
+        else
+          nil
+        end
       end
 
       def destroy user_data

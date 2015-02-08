@@ -1,5 +1,6 @@
 require 'ostruct'
 require 'pg'
+require 'bcrypt'
 
 module ListMore
   def self.users_repo=(repo)

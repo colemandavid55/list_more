@@ -36,6 +36,12 @@ module ListMore
                 ON DELETE CASCADE
                 ON UPDATE CASCADE
               );
+          CREATE TABLE IF NOT EXISTS sessions(
+              user_id INTEGER REFERENCES users(id)
+                ON DELETE CASCADE
+                ON UPDATE CASCADE
+              , token VARCHAR
+              );
           SQL
       end
 
