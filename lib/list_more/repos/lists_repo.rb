@@ -1,6 +1,6 @@
 module ListMore
   module Repositories
-    class ListsRepo
+    class ListsRepo < RepoHelper
 
       def all
         result = db.exec('SELECT * FROM lists').entries

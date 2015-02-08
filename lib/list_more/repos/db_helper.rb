@@ -1,18 +1,14 @@
-require 'pg'
 
 module ListMore
   module Repositories
+    class DBHelper < RepoHelper
 
-      def self.create_db_connection dbname
-        PG.connect(host: 'localhost', dbname: dbname)
-      end
-
-      def self.create_tables db
+      def create_tables
         db.exec <<-SQL
           CREATE TABLE IF NOT EXISTS users(
               id SERIAL PRIMARY KEY
               , username VARCHAR UNIQUE
-              , password VARCHAR
+              , password_digest VARCHAR
               );
           CREATE TABLE IF NOT EXISTS lists(
               id SERIAL PRIMARY KEY
@@ -43,7 +39,7 @@ module ListMore
           SQL
       end
 
-      def self.clear_tables db
+      def clear_tables
         db.exec <<-SQL
           DELETE FROM users;
           DELETE FROM lists;
@@ -52,7 +48,7 @@ module ListMore
         SQL
       end
 
-      def self.drop_tables db
+      def drop_tables
         db.exec <<-SQL
           DROP TABLE users CASCADE;
           DROP TABLE lists CASCADE;
@@ -61,13 +57,12 @@ module ListMore
         SQL
       end
 
-      def self.seed_users_table db
+      def seed_users_table
         db.exec("INSERT INTO users (username, password) VALUES ($1, $2)", ["Ramses", "pitbull"])
         db.exec("INSERT INTO users (username, password) VALUES ($1, $2)", ["Daisy", "collie"])
       end
+    end
 
   end
 end
 
-require_relative 'repos/users_repo'
-require_relative 'repos/lists_repo'
