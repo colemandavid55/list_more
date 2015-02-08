@@ -8,7 +8,7 @@ module ListMore
                 VALUES ($1, $2)
                 RETURNING *
                 ]
-        result = db.exec(sql, [data['token'], data['user_id']])
+        result = db.exec(sql, [data[:token], data[:user_id]])
         true
       end
 

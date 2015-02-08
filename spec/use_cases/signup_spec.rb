@@ -43,6 +43,15 @@ describe ListMore::SignUp do
       expect(response.success?).to be_false
     end
 
+    it "will not sign up a user with a missing username" do
+      user_data = {
+        'password' => "collie",
+        'password_conf' => "collie"
+      }
+      response = ListMore::SignUp.run user_data
+      expect(response.success?).to be_false
+    end
+
     it "will not sign up a user multiple times" do
       user = ListMore::Entities::User.new({:username => "Ramses", :password_digest => "pitbull"})
       user = ListMore.users_repo.save user

@@ -51,6 +51,7 @@ module ListMore
           DELETE FROM lists;
           DELETE FROM shared_lists;
           DELETE FROM items;
+          DELETE FROM sessions;
         SQL
       end
 
@@ -60,6 +61,7 @@ module ListMore
           DROP TABLE lists CASCADE;
           DROP TABLE shared_lists CASCADE;
           DROP TABLE items CASCADE;
+          DROP TABLE sessions CASCADE;
         SQL
       end
 
