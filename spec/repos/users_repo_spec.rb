@@ -6,7 +6,7 @@ describe ListMore::Repositories::UsersRepo do
   let(:dbhelper) { ListMore::Repositories::DBHelper.new 'listmore_test' }
   let(:user_1) { ListMore::Entities::User.new({:username => "Ramses", :password_digest => "pitbull"})}
   let(:user_2) { ListMore::Entities::User.new({:username => "Daisy", :password_digest => "collie"})}
-
+  
   before(:each) do
     dbhelper.drop_tables 
     dbhelper.create_tables 
