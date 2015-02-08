@@ -31,21 +31,17 @@ describe ListMore::Repositories::UsersRepo do
     expect(users.count).to eq 2
   end
 
-
-  xit "can find a user's id by username" do
-    user = ListMore::Repositories::UsersRepo.save db, {:username => "Ozymandias", :password => "egypt"}
-    user_id = ListMore::Repositories::UsersRepo.get_user_id db, user['username']
-
-    expect(user_id).to eq user['id']
+  it "gets a user by id" do
+    user = ListMore.users_repo.save user_1
+    result = ListMore.users_repo.find_by_id user.id
+    expect(result).to be_a ListMore::Entities::User
   end
 
-  xit "can find a username by id" do
-    user = ListMore::Repositories::UsersRepo.save db, {:username => "Ozymandias", :password => "egypt"}
-    username = ListMore::Repositories::UsersRepo.get_username db, user['id']
-
-    expect(username).to eq user['username']
-    expect(username).to eq "Ozymandias"
-  end
+  it "gets a user by username" do
+    user = ListMore.users_repo.save user_1
+    result = ListMore.users_repo.find_by_username user.username
+    expect(result).to be_a ListMore::Entities::User
+  end  
 
   xit "can delete a user by username" do
     expect(user_count db).to eq 0

@@ -17,7 +17,7 @@ module ListMore
         build_user result.first
       end
 
-      def get_user_by_id id
+      def find_by_id id
         sql = %q[
           SELECT * FROM users
           WHERE id = $1
@@ -26,7 +26,7 @@ module ListMore
         build_user result.first
       end
 
-      def get_user_by_username username
+      def find_by_username username
         sql = %q[
           SELECT * FROM users
           WHERE username = $1
