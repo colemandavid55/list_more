@@ -22,7 +22,7 @@ module ListMore
     end
 
     def verify_fields
-      return false if !params['username'] || params['password'] || params['password_conf']
+      return false if !(params['username'] || params['password'] || params['password_conf'])
       return false if params['password'] != params['password_conf']
       true
     end
