@@ -40,6 +40,21 @@ module ListMore
         end
       end
 
+      def find_by_token token
+        sql = %q[
+                SELECT * FROM users u
+                JOIN sessions s
+                ON s.user_id = u.id
+                WHERE s.token = $1
+                ]
+        result = db.exec(sql, [token])
+        if result.first
+          build_user result.first
+        else
+          nil
+        end
+      end
+
       def destroy user_data
         sql, param = user_data['id'] ?
           [%q[
