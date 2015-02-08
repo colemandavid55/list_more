@@ -43,22 +43,14 @@ describe ListMore::Repositories::UsersRepo do
     expect(result).to be_a ListMore::Entities::User
   end  
 
-  xit "can delete a user by username" do
-    expect(user_count db).to eq 0
-    user = ListMore::Repositories::UsersRepo.save db, {:username => "Ozymandias", :password => "egypt"}
-    expect(user_count db).to eq 1
+  it "can delete a user by id" do
+    user = ListMore.users_repo.save user_1
+    count = ListMore.users_repo.all.count
+    expect(count).to eq 1
 
-    ListMore::Repositories::UsersRepo.destroy db, {"username" => "Ozymandias"}
-    expect(user_count db).to eq 0
-  end
-
-  xit "can delete a user by id" do
-    expect(user_count db).to eq 0
-    user = ListMore::Repositories::UsersRepo.save db, {:username => "Ozymandias", :password => "egypt"}
-    expect(user_count db).to eq 1
-
-    ListMore::Repositories::UsersRepo.destroy db, {"id" => user['id']}
-    expect(user_count db).to eq 0
+    ListMore.users_repo.destroy user
+    count = ListMore.users_repo.all.count
+    expect(count).to eq 0
   end
 
 end
