@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'pry-byebug'
 
-describe ListMore::CreateList do
+describe ListMore::CreateItem do
 
   let(:dbhelper) { ListMore::Repositories::DBHelper.new 'listmore_test' }
   let(:user_1) { ListMore::Entities::User.new({:username => "Ramses", :password => "pitbull"})}
@@ -11,20 +11,19 @@ describe ListMore::CreateList do
     dbhelper.create_tables 
   end
 
-  it "will create a list" do
-    params = {
-      'name' => "Dogs"
+  it "will create an item" do
+    item_params = {
+      'content' => "This is the content of an item"
+    }
+    list_params = {
+      'name' => "This is the name of a list"
     }
     user_1.update_password user_1[:password]
     user = ListMore.users_repo.save user_1
     response = ListMore::SignIn.run user
-
-    params['token'] = response.token
-    result = ListMore::CreateList.run params
+    list_params['token'] = response.token
+    result = ListMore::CreateList.run list_params
     binding.pry
-    expect(result.success?).to be_true
-    expect(result.list.name).to eq "Dogs"
-    expect(result.list.user_id).to eq "1"
-    expect(result.list.id.to_i).to be_a Integer
   end
+
 end
