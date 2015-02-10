@@ -12,23 +12,22 @@ describe ListMore::UpdateList do
   end
 
   it "will update the name of an existing list" do
-    init_params = {
-      'name' => "Dogs"
-    }
-    user_1.update_password user_1[:password]
     user = ListMore.users_repo.save user_1
-    response = ListMore::SignIn.run user
 
-    init_params['token'] = response.token
-    result = ListMore::CreateList.run init_params
-    
-    params = result.list
-    params['token'] = init_params['token']
+    params = {
+      'name' => "Dogs",
+      'user_id' => user.id
+    }
+
+    response = ListMore::CreateList.run params
+
     params['name'] = "Updated Dogs"
-    updated_list_result = ListMore::UpdateList.run params
+    params['id'] = response.list.id
 
-    expect(updated_list_result.list.name).to eq "Updated Dogs"
-    expect(updated_list_result.list.id).to eq result.list.id
-    expect(updated_list_result.success?).to be_true
+    result = ListMore::UpdateList.run params
+
+    expect(result.list.name).to eq "Updated Dogs"
+    expect(result.list.id).to eq response.list.id
+    expect(result.success?).to be_true
   end
 end
