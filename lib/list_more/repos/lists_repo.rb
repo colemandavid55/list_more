@@ -41,6 +41,14 @@ module ListMore
         result.entries.map{ |entry| build_list entry }
       end
 
+      def find_by_id list_id
+        sql = %q[SELECT * FROM lists
+                WHERE id = $1
+                ]
+        result = db.exec(sql, [list_id])
+        build_list result.first
+      end
+
       def get_user_shared_lists user_id
       end
 

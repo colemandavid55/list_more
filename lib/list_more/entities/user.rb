@@ -7,6 +7,7 @@ module ListMore
       end
 
       def has_password? password
+        # require 'pry-byebug'; binding.pry
         x = BCrypt::Password.new(self.password_digest)
         x == password
       end

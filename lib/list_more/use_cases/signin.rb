@@ -9,7 +9,7 @@ module ListMore
         return failure "Please check all fields"
       end
 
-      user = ListMore.users_repo.find_by_username params['username']
+      user = ListMore.users_repo.find_by_username(params['username'])
 
       unless user 
         return failure "User not found"
@@ -25,7 +25,7 @@ module ListMore
     end
 
     def verify_fields
-      return false if !params['username'] || params['password']
+      return false if !(params['username'] && params['password'])
       true
     end
 
