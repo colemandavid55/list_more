@@ -21,7 +21,7 @@ describe ListMore::CreateList do
 
     params['token'] = response.token
     result = ListMore::CreateList.run params
-    binding.pry
+
     expect(result.success?).to be_true
     expect(result.list.name).to eq "Dogs"
     expect(result.list.user_id).to eq "1"

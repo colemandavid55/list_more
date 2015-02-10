@@ -4,15 +4,20 @@ module ListMore
 
     def run params
       @params = params
-      unless verify_fields
-        return failure "Please check all fields"
+
+      list = ListMore.lists_repo.find_by_id params['id']
+      unless list
+        return failure "List does not exist in the database"
       end
 
+      list_update = ListMore::Entities::List.new({:name => params['name'], :id => params['id']})
+      list_update = ListMore.lists_repo.update list_update
 
+      if list_update
+        return success list: list_update
+      end
+      failure
     end
 
-    def verify_fields
-      return false if !(params['name'] && params['list_id'])
-    end
   end
 end
