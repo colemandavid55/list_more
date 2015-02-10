@@ -10,5 +10,11 @@ class ListMore::Server < Sinatra::Application
     "First test starter"
   end
 
+  # post '/lists' do
+  #   user = ListMore::VerifyToken.run params
+  #   params[:user_id] = user.id
+  #   ListMore::CreateList.run params
+  # end
+
 end
 

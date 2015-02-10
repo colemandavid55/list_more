@@ -4,7 +4,7 @@ require 'pry-byebug'
 describe ListMore::CreateList do
 
   let(:dbhelper) { ListMore::Repositories::DBHelper.new 'listmore_test' }
-  let(:user_1) { ListMore::Entities::User.new({:username => "Ramses", :password => "pitbull"})}
+  let(:user_1) { ListMore::Entities::User.new({:username => "Ramses", :password_digest => "pitbull"})}
 
   before(:each) do
     dbhelper.drop_tables 
@@ -12,14 +12,13 @@ describe ListMore::CreateList do
   end
 
   it "will create a list" do
-    params = {
-      'name' => "Dogs"
-    }
-    user_1.update_password user_1[:password]
     user = ListMore.users_repo.save user_1
-    response = ListMore::SignIn.run user
 
-    params['token'] = response.token
+    params = {
+      'name' => "Dogs",
+      'user_id' => user.id
+    }
+
     result = ListMore::CreateList.run params
 
     expect(result.success?).to be_true
