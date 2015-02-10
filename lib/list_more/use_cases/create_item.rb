@@ -9,7 +9,7 @@ module ListMore
       # end
 
       item = ListMore::Entities::Item.new({:content => params['content'], :user_id => params['user_id'], :list_id => params['list_id']})
-      # dont forget to save the item to the db
+      item = ListMore.items_repo.save item
 
       return failure unless item
 
