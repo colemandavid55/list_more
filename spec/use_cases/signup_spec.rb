@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'pry-byebug'
 
 describe ListMore::SignUp do
 
@@ -18,7 +19,10 @@ describe ListMore::SignUp do
         'password_conf' => "pitbull"
       }
       response = ListMore::SignUp.run user_data
+      # binding.pry
       expect(response.success?).to be_true
+      expect(response.token).to be_a String
+      expect(response.token.length).to eq 32
     end
   end
 
