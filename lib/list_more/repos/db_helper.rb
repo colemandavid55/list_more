@@ -74,3 +74,7 @@ module ListMore
   end
 end
 
+# create shared_lists repo/methods/tests
+# likely 3 methods one test for each
+# create share_list use case and test
+

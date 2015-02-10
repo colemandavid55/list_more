@@ -33,6 +33,14 @@ module ListMore
   def self.sessions_repo
     @sessions_repo
   end
+
+  def self.shared_lists_repo=(repo)
+    @shared_lists_repo = repo
+  end
+
+  def self.shared_lists_repo
+    @shared_lists_repo
+  end
 end
 
 
@@ -45,6 +53,7 @@ require_relative 'list_more/repos/users_repo.rb'
 require_relative 'list_more/repos/lists_repo.rb'
 require_relative 'list_more/repos/items_repo.rb'
 require_relative 'list_more/repos/sessions_repo.rb'
+require_relative 'list_more/repos/shared_lists_repo.rb'
 require_relative 'list_more/repos/db_helper.rb'
 require_relative 'list_more/use_cases/use_case.rb'
 require_relative 'list_more/use_cases/signup.rb'
