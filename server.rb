@@ -1,13 +1,14 @@
 require 'sinatra'
 require 'rest-client'
 require 'json'
+require 'sinatra/base'
 
 class ListMore::Server < Sinatra::Application
 
-  set :bind '0.0.0.0'
+  set :bind, '0.0.0.0'
 
   get '/' do
-    "First test starter"
+    send_file 'public/index.html'
   end
 
   # post '/lists' do
