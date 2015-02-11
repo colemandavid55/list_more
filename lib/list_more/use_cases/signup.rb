@@ -15,7 +15,7 @@ module ListMore
       user.update_password params['password']
       ListMore.users_repo.save user
       response = ListMore::CreateSession.run user
-      success :token => response.token
+      success :token => response.token, :user => user
     end
 
     def credentials

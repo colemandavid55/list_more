@@ -21,7 +21,7 @@ module ListMore
         return failure "Incorrect Password"
       end
 
-      success :token => created_session.token
+      success :token => created_session.token, :user => user
     end
 
     def verify_fields
