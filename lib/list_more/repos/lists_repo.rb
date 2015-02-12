@@ -49,7 +49,16 @@ module ListMore
         build_list result.first
       end
 
-      def get_user_shared_lists user_id
+      def get_lists_shared_with_user user_id
+        sql = %q[
+                SELECT l.name as name
+                FROM shared_lists s
+                JOIN lists l
+                ON s.list_id = l.id
+                WHERE s.user_id = $1
+                ]
+        result = db.exec(sql, [user_id])
+        result.entries.map{ |entry| build_list entry }
       end
 
       def destroy_list list
