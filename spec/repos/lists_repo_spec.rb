@@ -58,7 +58,7 @@ describe ListMore::Repositories::ListsRepo do
     list_2 = ListMore::Entities::List.new({:name => "Second List", :user_id => user.id})
     ListMore.lists_repo.save list_1
     ListMore.lists_repo.save list_2
-    lists = ListMore.lists_repo.get_user_lists user
+    lists = ListMore.lists_repo.get_user_lists user.id
 
     expect(lists).to be_a Array
     expect(lists.count).to eq 2

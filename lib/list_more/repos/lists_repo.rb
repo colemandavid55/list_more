@@ -33,11 +33,11 @@ module ListMore
       # end
 
       # Make sure there is some verification of contents, array could be empty result.first is a good example
-      def get_user_lists user
+      def get_user_lists user_id
         sql = %q[SELECT * FROM lists
                 WHERE user_id = $1
                 ]
-        result = db.exec(sql, [user.id])
+        result = db.exec(sql, [user_id])
         result.entries.map{ |entry| build_list entry }
       end
 
@@ -52,10 +52,14 @@ module ListMore
       def get_lists_shared_with_user user_id
         sql = %q[
                 SELECT l.name as name
+                , l.id as id
+                , u.id as user_id
                 FROM shared_lists s
                 JOIN lists l
                 ON s.list_id = l.id
-                WHERE s.user_id = $1
+                JOIN users u
+                ON u.id = s.user_id
+                WHERE u.id = $1
                 ]
         result = db.exec(sql, [user_id])
         result.entries.map{ |entry| build_list entry }

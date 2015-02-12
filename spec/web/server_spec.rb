@@ -24,7 +24,7 @@ describe ListMore::Server do
   # end
 
   describe "GET /" do
-    it "loads the homepage" do
+    xit "loads the homepage" do
       get '/'
       expect(last_response).to be_ok
       expect(last_response.body).to include "Loading.."
@@ -33,7 +33,7 @@ describe ListMore::Server do
 
 
   describe "POST /signup" do
-    it "makes a successful post request to signup endpoint" do
+    xit "makes a successful post request to signup endpoint" do
       params = {
         :username      => "Duevyn",
         :password      => "Cooke",
@@ -51,7 +51,7 @@ describe ListMore::Server do
   end
 
   describe "POST /signin" do
-    it "makes a successful post request to signin endpoint" do
+    xit "makes a successful post request to signin endpoint" do
       user = ListMore::Entities::User.new({username: 'nick'})
       user.update_password("mks123")
       ListMore.users_repo.save user
@@ -73,7 +73,7 @@ describe ListMore::Server do
   end
 
   describe "GET /users" do
-    it "makes a successfull get request to the users endpoint" do
+    xit "makes a successfull get request to the users endpoint" do
       get '/users'
       expect(last_response).to be_ok
       data = last_response.body
@@ -89,7 +89,7 @@ describe ListMore::Server do
   end
 
   describe "GET /users/:id" do
-    it "makes a successful get request to an individul user endpoint" do
+    xit "makes a successful get request to an individul user endpoint" do
       params = {
         :id => users[0]['id']
       }
@@ -106,23 +106,50 @@ describe ListMore::Server do
   end
 
   describe "GET /users/:id/lists" do
-    it "gets all lists of a user from endpoint" do
+    xit "gets all lists of a user from endpoint" do
       first_user = users[0]
       second_user = users[1]
       list_1 = ListMore::Entities::List.new({name: "First List", user_id: first_user['id'] })
       list_2 = ListMore::Entities::List.new({name: "Second List", user_id: first_user['id'] })
       list_3 = ListMore::Entities::List.new({name: "Share List", user_id: second_user['id'] })
-      ListMore.lists_repo.save list_1
+      receive_list = ListMore.lists_repo.save list_1
       ListMore.lists_repo.save list_2
       share_list = ListMore.lists_repo.save list_3
 
       params = {
-        'user_id' => share_list['user_id'],
+        'user_id' => receive_list['user_id'],
         'list_id' => share_list['id']
       }
+
       shared_list_data = ListMore::ShareList.run params
-      get '/users/' + params['user_id'] + '/lists'
+
+
+
+      params = {
+        'user' => first_user
+      }
+
+      # binding.pry
+
+
+      get '/users/' + first_user.id + '/lists' #, params
+      response = JSON.parse(last_response.body)
+
+      expect()
+
       binding.pry
+    end
+  end
+
+  describe "POST /users/:id/lists" do
+    xit "makes a successful post request to the endpoint creating a new list" do
+      user = users[0]
+      params = {
+        'name'    => 'Post List',
+        'user_id' => user['id']
+      }
+
+      ListMore::CreateList.run params
     end
   end
 end

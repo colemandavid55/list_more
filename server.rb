@@ -53,9 +53,11 @@ class ListMore::Server < Sinatra::Application
   end
 
   get '/users/:id/lists' do
-    user_lists = ListMore.lists_repo.all
-    shared_lists = ListMore.lists_repo.get_lists_shared_with_user params['id']
     binding.pry
+    user_lists = ListMore.lists_repo.get_user_lists params[:id]
+    shared_lists = ListMore.lists_repo.get_lists_shared_with_user params[:id]
+    binding.pry
+
     list_data = user_lists.map{ |list| ListMore::Serializer.run list}
     shared_list_data = shared_lists.map{ |shared_list| ListMore::Serializer.run shared_list }
 
@@ -67,7 +69,9 @@ class ListMore::Server < Sinatra::Application
 
   post '/users/:id/lists' do
     data = ListMore::CreateList.run params
-    binding.pry
+    {
+      'created_list' => data
+    }.to_json
   end
 
   delete '/users/:id/lists' do
