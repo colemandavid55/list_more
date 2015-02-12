@@ -19,6 +19,11 @@ module ListMore
         build_item result.first
       end
 
+      def find_by_id item_id
+        result = db.exec("SELECT * FROM items WHERE id = $1;")
+        build_item result.first
+      end
+
       def get_list_items list
         sql = %q[SELECT * FROM items
                 WHERE list_id = $1
