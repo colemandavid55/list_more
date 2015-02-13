@@ -8,7 +8,14 @@
     </div>
 
   <script type="text/javascript" src="/js/vendor/mithril.js"></script>
+  <script type="text/javascript" src="/modules/welcome.js"></script>
+  <script type="text/javascript" src="/modules/signup.js"></script>
   <script type="text/javascript">
+
+    m.route(document.getElementById('app'), "/", {
+      "/": Welcome,
+      "/signup": Signup
+    })
   
   </script>
   </body>

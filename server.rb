@@ -8,9 +8,9 @@ class ListMore::Server < Sinatra::Application
 
   set :bind, '0.0.0.0'
 
-  before do
+  before '/#/*' do
     verified = ListMore::VerifyToken.run params
-    halt 401 unless verified
+    return {error: 'not authenticated'}.to_json unless verified
   end
 
   get '/' do
@@ -31,7 +31,7 @@ class ListMore::Server < Sinatra::Application
     data.to_json
   end
 
-  post '/signin' do
+  post '/#/signin' do
     data = {}
     result = ListMore::SignIn.run params
 
@@ -45,11 +45,11 @@ class ListMore::Server < Sinatra::Application
     data.to_json
   end
 
-  post '/logout' do
+  post '/#/logout' do
     ListMore.sessions_repo.delete params['token']
   end
 
-  get '/users' do
+  get '/#/users' do
     users = ListMore.users_repo.all
     data = users.map { |user| ListMore::Serializer.run user }
     {
@@ -57,7 +57,7 @@ class ListMore::Server < Sinatra::Application
     }.to_json
   end
 
-  get '/users/:id' do
+  get '/#/users/:id' do
     user = ListMore.users_repo.find_by_id params[:id]
     data = ListMore::Serializer.run user
     {
@@ -65,7 +65,7 @@ class ListMore::Server < Sinatra::Application
     }.to_json
   end
 
-  get '/users/:id/lists' do
+  get '/#/users/:id/lists' do
     user_lists = ListMore.lists_repo.get_user_lists params[:id]
     shared_lists = ListMore.lists_repo.get_lists_shared_with_user params[:id]
 
@@ -78,7 +78,7 @@ class ListMore::Server < Sinatra::Application
     }.to_json
   end
 
-  post '/users/:id/lists' do
+  post '/#/users/:id/lists' do
     list = ListMore::CreateList.run params
     list_data = ListMore::Serializer.run list
     {
@@ -86,7 +86,7 @@ class ListMore::Server < Sinatra::Application
     }.to_json
   end
 
-  put '/lists/:id' do
+  put '/#/lists/:id' do
     result = ListMore::UpdateList.run params
     # should i get all lists again here or "redirect" to get all lists for a user endpoint?
     if result.success?
@@ -96,13 +96,13 @@ class ListMore::Server < Sinatra::Application
     end
   end
 
-  delete '/lists/:id' do
+  delete '/#/lists/:id' do
     list = ListMore.lists_repo.find_by_id params[:id]
     ListMore.lists_repo.destroy_list list
     # check for success 
   end
 
-  get '/users/:user_id/lists/:id' do
+  get '/#/users/:user_id/lists/:id' do
     items = ListMore.items_repo.get_list_items params
     items_data = items.map{ |item| ListMore::Serializer.run item }
     {
@@ -110,7 +110,7 @@ class ListMore::Server < Sinatra::Application
     }.to_json
   end
 
-  post '/lists/:list_id/items' do
+  post '/#/lists/:list_id/items' do
     item = ListMore::CreateItem.run params
     item_data = ListMore::Serializer.run item
     {
@@ -118,7 +118,7 @@ class ListMore::Server < Sinatra::Application
     }.to_json
   end
 
-  put '/lists/:list_id/items' do
+  put '/#/lists/:list_id/items' do
     result = ListMore::UpdateItem.run params
     if result.success?
       {success: true}.to_json
@@ -127,13 +127,13 @@ class ListMore::Server < Sinatra::Application
     end
   end
 
-  delete '/items/:id' do
+  delete '/#/items/:id' do
     item = ListMore.items_repo.find_by_id item
     ListMore.items_repo.delete params
     # check for success
   end
 
-  post '/share_list' do
+  post '/#/share_list' do
     shared_list = ListMore::ShareList params
     shared_list_data = ListMore::Serializer.run shared_list
     # will serializer work in this context?
@@ -142,12 +142,12 @@ class ListMore::Server < Sinatra::Application
     }.to_json
   end
 
-  delete '/share_list/:id' do
+  delete '/#/share_list/:id' do
     ListMore.shared_lists_repo.delete params
     # check for success
   end
 
-  # post '/lists' do
+  # post '/#/lists' do
   #   user = ListMore::VerifyToken.run params
   #   params[:user_id] = user.id
   #   ListMore::CreateList.run params
@@ -159,4 +159,4 @@ end
 #   resources :comments
 # end
 
-# delete '/comments/:id'
+# delete '/#/comments/:id'
