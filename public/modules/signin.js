@@ -11,15 +11,17 @@ SignIn.controller = function () {
   ctrl.submit = function (e) {
     e.preventDefault()
     console.log('sign in submitted', ctrl.user)
-    m.request({method: "POST", url: "/signin"}).then(
+    m.request({method: "POST", url: "/signin", data: ctrl.user}).then(
       function (response) {
         // User signed in!
         // switch pages with m.route and send them somewhere else
         console.log("Success",response)
+        m.route('/user_home')
       },
       function (a,b,c) {
         console.log("Error",a,b,c)
         // Sign in failed
+        m.route('/')
       }
     )
   }

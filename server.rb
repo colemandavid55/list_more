@@ -39,6 +39,9 @@ class ListMore::Server < Sinatra::Application
   end
 
   post '/signin' do
+    json = request.body.read
+    puts json
+    params = JSON.parse(json)
     data = {}
     result = ListMore::SignIn.run params
 
@@ -46,7 +49,8 @@ class ListMore::Server < Sinatra::Application
       data[:token] = result.token
       data[:user] = ListMore::Serializer.run result.user
     else
-      # some error
+      status 403
+      return {error: "incorrect login credentials"}.to_json
     end
 
     data.to_json
