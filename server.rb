@@ -57,6 +57,7 @@ class ListMore::Server < Sinatra::Application
   end
 
   post '/logout' do
+    puts request.body.read
     ListMore.sessions_repo.delete params['token']
   end
 

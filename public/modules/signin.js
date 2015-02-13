@@ -16,10 +16,11 @@ SignIn.controller = function () {
         // User signed in!
         // switch pages with m.route and send them somewhere else
         console.log("Success",response)
+        localStorage.setItem('token', response.token)
         m.route('/user_home')
       },
-      function (a,b,c) {
-        console.log("Error",a,b,c)
+      function (error) {
+        console.log("Error",error)
         // Sign in failed
         m.route('/')
       }
