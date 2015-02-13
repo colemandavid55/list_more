@@ -16,6 +16,7 @@ SignUp.controller = function () {
     m.request({method: "POST", url: "/signup", data: ctrl.user}).then(
       function (response) {
         console.log("Success",response)
+        localStorage.setItem('token', response.token)
         m.route("/user_home")
       },
       function (error) {
