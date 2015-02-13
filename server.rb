@@ -19,14 +19,20 @@ class ListMore::Server < Sinatra::Application
   end
 
   post '/signup' do
+
+    json = request.body.read
+
+    params = JSON.parse(json)
     data = {}
     result = ListMore::SignUp.run params
+    puts result
 
     if result.success?
       data[:token] = result.token
       data[:user] = ListMore::Serializer.run result.user
     else
-      
+      status 403
+      return  {error: "please fill out all fields"}.to_json
     end
 
     data.to_json

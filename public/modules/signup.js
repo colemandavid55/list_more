@@ -13,12 +13,14 @@ SignUp.controller = function () {
   ctrl.submit = function (e) {
     e.preventDefault()
     console.log("sign up submitted", ctrl.user)
-    m.request({method: "POST", url: "/signup"}).then(
+    m.request({method: "POST", url: "/signup", data: ctrl.user}).then(
       function (response) {
         console.log("Success",response)
+        m.route("/user_home")
       },
       function (error) {
         console.log("Error",error)
+        m.route("/")
       }
     )
 

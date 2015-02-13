@@ -11,12 +11,14 @@
   <script type="text/javascript" src="/modules/welcome.js"></script>
   <script type="text/javascript" src="/modules/signup.js"></script>
   <script type="text/javascript" src="/modules/signin.js"></script>
+  <script type="text/javascript" src="/modules/userhome.js"></script>
   <script type="text/javascript">
 
     m.route(document.getElementById('app'), "/", {
       "/": Welcome,
       "/signup": SignUp,
-      "/signin": SignIn
+      "/signin": SignIn,
+      "/user_home": UserHome
     })
   
   </script>
