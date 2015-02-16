@@ -11,11 +11,27 @@ UserLists.controller = function () {
   ctrl.submit = function (e) {
     e.preventDefault();
     m.request({method: "POST", url: "users/" + UserLists.vm.userId() + "/lists", data: ctrl.list}).then(function () {
-    UserLists.vm.lists = m.request({method: "GET", url: "users/" + UserLists.vm.userId() + "/lists"});
-    m.route("/users/" + UserLists.vm.userId())
+      UserLists.vm.lists = m.request({method: "GET", url: "users/" + UserLists.vm.userId() + "/lists"});
+      m.route("/users/" + UserLists.vm.userId())
     }),
 
     console.log("list add clicked")
+  }
+
+  ctrl.logOut = function (e) {
+    console.log("logout selected")
+    localStorage.clear()
+  }
+
+  ctrl.selectList = function (userId, listId) {
+    console.log("list selected");
+    console.log(userId);
+    console.log(listId);
+    UserItems.vm.items = m.request({method: "GET", url: "/lists/" + listId});
+    UserItems.vm.userId(userId);
+    UserItems.vm.listId(listId);
+    console.log(UserItems.vm.items())
+    return true
   }
 
   ctrl.list = {
@@ -40,7 +56,7 @@ UserLists.view = function (ctrl) {
   )
 
   function listView (list) {
-    return [m("a[href='/lists/" + list.id + "']", {config: m.route}, list.name),
+    return [m("a[href='/lists/" + list.id + "']", {config: m.route, onclick: ctrl.selectList.bind(null, list.user_id, list.id)}, list.name),
     m('br')]
   }
 

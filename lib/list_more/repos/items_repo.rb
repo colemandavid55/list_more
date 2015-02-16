@@ -24,11 +24,11 @@ module ListMore
         build_item result.first
       end
 
-      def get_list_items list
+      def get_list_items list_id
         sql = %q[SELECT * FROM items
                 WHERE list_id = $1
                 ]
-        result = db.exec(sql, [list.id])
+        result = db.exec(sql, [list_id])
         result.entries.map{ |entry| build_item entry }
       end
 

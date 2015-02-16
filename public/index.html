@@ -13,6 +13,7 @@
   <script type="text/javascript" src="/modules/signin.js"></script>
   <script type="text/javascript" src="/modules/userhome.js"></script>
   <script type="text/javascript" src="/modules/userlists.js"></script>
+  <script type="text/javascript" src="/modules/useritems.js"></script>
   <script type="text/javascript">
 
     m.route(document.getElementById('app'), "/", {
@@ -21,7 +22,8 @@
       "/signin": SignIn,
       "/user_home": UserHome,
       "/logout": Welcome,
-      "/users/:id": UserLists
+      "/users/:id": UserLists,
+      "/lists/:id": UserItems
     })
   
   </script>

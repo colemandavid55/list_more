@@ -115,8 +115,9 @@ class ListMore::Server < Sinatra::Application
     # check for success 
   end
 
-  get '/users/:user_id/lists/:id' do
-    items = ListMore.items_repo.get_list_items params
+  get '/lists/:id' do
+    puts request.body.read
+    items = ListMore.items_repo.get_list_items params[:id]
     items_data = items.map{ |item| ListMore::Serializer.run item }
     {
       'items' => items_data
@@ -124,6 +125,7 @@ class ListMore::Server < Sinatra::Application
   end
 
   post '/lists/:list_id/items' do
+    params = JSON.parse request.body.read
     item = ListMore::CreateItem.run params
     item_data = ListMore::Serializer.run item
     {
