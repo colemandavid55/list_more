@@ -8,13 +8,18 @@
     </div>
 
   <script type="text/javascript" src="/js/vendor/mithril.js"></script>
-  <script type="text/javascript" src="/modules/welcome.js"></script>
+  <script type="text/javascript" src="/js/ext/globals.js"></script>
+  <script type="text/javascript" src="/js/ext/arrays.js"></script>
+  <script type="text/javascript" src="/modules/app.js"></script>
   <script type="text/javascript" src="/modules/signup.js"></script>
   <script type="text/javascript" src="/modules/signin.js"></script>
   <script type="text/javascript" src="/modules/userhome.js"></script>
   <script type="text/javascript" src="/modules/userlists.js"></script>
   <script type="text/javascript" src="/modules/useritems.js"></script>
+  <script type="text/javascript" src="/modules/welcome.js"></script>
   <script type="text/javascript">
+
+    App.attemptSignIn()
 
     m.route(document.getElementById('app'), "/", {
       "/": Welcome,
@@ -23,7 +28,7 @@
       "/user_home": UserHome,
       "/logout": Welcome,
       "/users/:id": UserLists,
-      "/lists/:id": UserItems
+      "/users/:userId/lists/:id": UserItems
     })
   
   </script>

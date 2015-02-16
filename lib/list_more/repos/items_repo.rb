@@ -20,7 +20,7 @@ module ListMore
       end
 
       def find_by_id item_id
-        result = db.exec("SELECT * FROM items WHERE id = $1;")
+        result = db.exec("SELECT * FROM items WHERE id = $1;", [item_id])
         build_item result.first
       end
 
@@ -40,11 +40,11 @@ module ListMore
         result.entries.map{ |entry| build_item entry }
       end
 
-      def destroy_item item
+      def destroy_item item_id
         sql = %q[DELETE FROM items
                 WHERE id = $1
                 ]
-        db.exec(sql, [item.id])
+        db.exec(sql, [item_id])
       end
       
       def build_item data

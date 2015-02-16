@@ -9,8 +9,17 @@ class ListMore::Server < Sinatra::Application
   set :bind, '0.0.0.0'
 
   before do
-    pass if ['/', '/signup'].include? request.path_info
-    verified = ListMore::VerifyToken.run params
+    # request.body.rewind
+
+    @body = request.body.read
+    @body = "{}" if @body.length == 0
+    @params = JSON.parse(@body)
+    puts "Got params: #{@params}"
+
+    puts "PATH INFO: #{request.path_info.inspect}"
+    pass if ['/', '/signup', '/signin'].include? request.path_info
+    
+    verified = ListMore::VerifyToken.run @params
     return {error: 'not authenticated'}.to_json unless verified
   end
 
@@ -39,11 +48,12 @@ class ListMore::Server < Sinatra::Application
   end
 
   post '/signin' do
-    json = request.body.read
-    puts json
-    params = JSON.parse(json)
+    # json = request.body.read
+    # puts json
+    # params = JSON.parse(json)
+    # params = JSON.parse(request.body.rewind)
     data = {}
-    result = ListMore::SignIn.run params
+    result = ListMore::SignIn.run @params
 
     if result.success?
       data[:token] = result.token
@@ -70,7 +80,7 @@ class ListMore::Server < Sinatra::Application
   end
 
   get '/users/:id' do
-    user = ListMore.users_repo.find_by_id params[:id]
+    user = ListMore.users_repo.find_by_id @params['id']
     data = ListMore::Serializer.run user
     {
       'user' => data
@@ -78,8 +88,8 @@ class ListMore::Server < Sinatra::Application
   end
 
   get '/users/:id/lists' do
-    user_lists = ListMore.lists_repo.get_user_lists params[:id]
-    shared_lists = ListMore.lists_repo.get_lists_shared_with_user params[:id]
+    user_lists = ListMore.lists_repo.get_user_lists @params['id']
+    shared_lists = ListMore.lists_repo.get_lists_shared_with_user @params['id']
 
     lists_data = user_lists.map{ |list| ListMore::Serializer.run list}
     shared_lists_data = shared_lists.map{ |shared_list| ListMore::Serializer.run shared_list }
@@ -91,8 +101,8 @@ class ListMore::Server < Sinatra::Application
   end
 
   post '/users/:id/lists' do
-    params = JSON.parse request.body.read
-    list = ListMore::CreateList.run params
+    # params = JSON.parse request.body.read
+    list = ListMore::CreateList.run @params
     list_data = ListMore::Serializer.run list
     {
       'list' => list_data
@@ -116,8 +126,8 @@ class ListMore::Server < Sinatra::Application
   end
 
   get '/lists/:id' do
-    puts request.body.read
-    items = ListMore.items_repo.get_list_items params[:id]
+    # puts request.body.read
+    items = ListMore.items_repo.get_list_items @params['id']
     items_data = items.map{ |item| ListMore::Serializer.run item }
     {
       'items' => items_data
@@ -143,8 +153,10 @@ class ListMore::Server < Sinatra::Application
   end
 
   delete '/items/:id' do
-    item = ListMore.items_repo.find_by_id item
-    ListMore.items_repo.delete params
+    params = JSON.parse request.body.read
+    puts params
+    item = ListMore.items_repo.find_by_id params['id']
+    ListMore.items_repo.destroy_item item.id
     # check for success
   end
 

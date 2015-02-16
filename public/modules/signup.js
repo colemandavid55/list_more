@@ -17,7 +17,8 @@ SignUp.controller = function () {
       function (response) {
         console.log("Success",response)
         localStorage.setItem('token', response.token)
-        localStorage.setItem('currentUser', response.user.username)
+        localStorage.setItem('currentUserName', response.user.username)
+        localStorage.setItem('currentUserId', response.user.id)
         m.route("/user_home")
       },
       function (error) {
