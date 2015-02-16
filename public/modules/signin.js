@@ -15,8 +15,9 @@ SignIn.controller = function () {
       function (response) {
         // User signed in!
         // switch pages with m.route and send them somewhere else
-        console.log("Success",response)
+        console.log("Successful",response)
         localStorage.setItem('token', response.token)
+        localStorage.setItem('currentUser', response.user.username)
         m.route('/user_home')
       },
       function (error) {
