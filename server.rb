@@ -91,6 +91,7 @@ class ListMore::Server < Sinatra::Application
   end
 
   post '/users/:id/lists' do
+    params = JSON.parse request.body.read
     list = ListMore::CreateList.run params
     list_data = ListMore::Serializer.run list
     {

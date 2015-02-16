@@ -15,7 +15,8 @@ UserHome.controller = function () {
 
   ctrl.selectUser = function (userId) {
     console.log("user selected");
-    UserLists.vm.lists = m.request({method: "GET", url: "/users/" + userId + "/lists"})
+    UserLists.vm.lists = m.request({method: "GET", url: "/users/" + userId + "/lists"});
+    UserLists.vm.userId(userId);
     console.log(UserLists.vm.lists)
     return true
   }
