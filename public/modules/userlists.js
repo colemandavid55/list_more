@@ -11,6 +11,7 @@ UserLists.vm = {
       console.log(response);
       vm.userLists(response.user_lists)
       vm.sharedLists(response.shared_lists)
+
     })
   }
 }
@@ -26,6 +27,10 @@ UserLists.controller = function () {
   var vm = UserLists.vm
   vm.userId( m.route.param("id") )
   vm.sync()
+  // if (!App.vm.user()) {
+  //   m.route('/')
+  // }
+
 
   ctrl.submit = function (e) {
     e.preventDefault();
@@ -83,7 +88,7 @@ UserLists.view = function (ctrl) {
   )
 
   function listView (list) {
-    return [m("a[href='/users/'" + list.user_id +"/lists/" + list.id + "']", {config: m.route, onclick: ctrl.selectList.bind(null, list.user_id, list.id)}, list.name),
+    return [m("a[href='/users/" + list.user_id +"/lists/" + list.id + "']", {config: m.route, onclick: ctrl.selectList.bind(null, list.user_id, list.id)}, list.name),
     m('br')]
   }
 

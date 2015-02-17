@@ -28,12 +28,8 @@ class ListMore::Server < Sinatra::Application
   end
 
   post '/signup' do
-
-    json = request.body.read
-
-    params = JSON.parse(json)
     data = {}
-    result = ListMore::SignUp.run params
+    result = ListMore::SignUp.run @params
     puts result
 
     if result.success?
@@ -67,8 +63,8 @@ class ListMore::Server < Sinatra::Application
   end
 
   post '/logout' do
-    puts request.body.read
-    ListMore.sessions_repo.delete params['token']
+
+    ListMore.sessions_repo.delete @params['token']
   end
 
   get '/users' do
@@ -126,6 +122,7 @@ class ListMore::Server < Sinatra::Application
   end
 
   get '/lists/:id' do
+    puts "GET list #{@params[:id]}"
     # puts request.body.read
     items = ListMore.items_repo.get_list_items @params['id']
     items_data = items.map{ |item| ListMore::Serializer.run item }
@@ -153,9 +150,9 @@ class ListMore::Server < Sinatra::Application
   end
 
   delete '/items/:id' do
-    params = JSON.parse request.body.read
-    puts params
-    item = ListMore.items_repo.find_by_id params['id']
+    # params = JSON.parse request.body.read
+    # puts params
+    item = ListMore.items_repo.find_by_id @params['id']
     ListMore.items_repo.destroy_item item.id
     # check for success
   end

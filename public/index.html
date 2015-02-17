@@ -16,6 +16,8 @@
   <script type="text/javascript" src="/modules/userhome.js"></script>
   <script type="text/javascript" src="/modules/userlists.js"></script>
   <script type="text/javascript" src="/modules/useritems.js"></script>
+  <script type="text/javascript" src="/modules/editList.js"></script>
+  <script type="text/javascript" src="/modules/editItem.js"></script>
   <script type="text/javascript" src="/modules/welcome.js"></script>
   <script type="text/javascript">
 
@@ -25,11 +27,15 @@
       "/": Welcome,
       "/signup": SignUp,
       "/signin": SignIn,
-      "/user_home": UserHome,
+      "/users": UserHome,
       "/logout": Welcome,
       "/users/:id": UserLists,
-      "/users/:userId/lists/:id": UserItems
+      "/users/:userId/lists/:id": UserItems,
+      "/lists/:id": EditList,
+      "/items/:id": EditItem
     })
+
+    // App.attemptSignIn()
   
   </script>
   </body>

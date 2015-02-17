@@ -6,6 +6,7 @@ UserHome.vm = {
     var vm = UserHome.vm
     m.request({method: "GET", url: "/users", data: {'token': App.vm.user().token}}).then(function (response) {
       vm.users(response.users)
+
     });
   }
 }
@@ -16,6 +17,8 @@ UserHome.controller = function () {
 
   var vm = UserHome.vm
   vm.sync()
+
+
 
   ctrl.logOut = function (e) {
     console.log("logout selected")

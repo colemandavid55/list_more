@@ -28,6 +28,9 @@ App.attemptSignIn = function () {
 			'username': localStorage.getItem('username'),
 			'token': localStorage.getItem('token')
 		})
-		m.route('/user_home')
+		m.route('/users')
+	}
+	else {
+		m.route('/')
 	}
 }

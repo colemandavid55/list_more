@@ -5,11 +5,8 @@ var Welcome = {}
 
 Welcome.controller = function () {
   var ctrl = {}
-
-  App.attemptSignIn()
-
-  ctrl.submit = function () {
-  	// redirect to users home page if localStorage has session token
+  if (App.vm.user()) {
+  	m.route('/users')
   }
   return ctrl
 }

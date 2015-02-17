@@ -16,10 +16,16 @@ SignUp.controller = function () {
     m.request({method: "POST", url: "/signup", data: ctrl.user}).then(
       function (response) {
         console.log("Success",response)
-        localStorage.setItem('token', response.token)
-        localStorage.setItem('currentUserName', response.user.username)
-        localStorage.setItem('currentUserId', response.user.id)
-        m.route("/user_home")
+        App.signIn({
+          token: response.token,
+          username: response.user.username,
+          id: response.user.id
+        })
+        m.route('/users')
+        // localStorage.setItem('token', response.token)
+        // localStorage.setItem('currentUserName', response.user.username)
+        // localStorage.setItem('currentUserId', response.user.id)
+        // m.route("/users")
       },
       function (error) {
         console.log("Error",error)

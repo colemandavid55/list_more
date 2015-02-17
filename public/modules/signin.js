@@ -24,7 +24,7 @@ SignIn.controller = function () {
           username: response.user.username,
           id: response.user.id
         })
-        m.route('/user_home')
+        m.route('/users')
       },
       function (error) {
         console.log("Error",error)

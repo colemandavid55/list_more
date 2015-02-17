@@ -28,6 +28,7 @@ UserItems.controller = function () {
   vm.sync()
 
 
+
   ctrl.submit = function (e) {
     e.preventDefault();
     m.request({method: "POST", url: "/lists/" + vm.listId() + "/items", data: ctrl.item}).then(function () {
@@ -60,12 +61,20 @@ UserItems.controller = function () {
     })
     vm.items(newItemArray)
 
+    extend(item, {'token': App.vm.user().token})
+
     m.request({method: "DELETE", url: "/items/" + item.id, data: item, background: true})//.then(function () {
     //   vm.items = m.request({method: "GET", url: "/lists/" + vm.listId()});
     //   m.route("/lists/" + vm.listId())
     // })
 
     console.log("item delete clicked")
+  }
+
+  ctrl.editItem = function (item, e) {
+    e.preventDefault();
+    console.log("Attempting to edit", item, '/items/' + item.id)
+    m.route('/items/' + item.id)
   }
 
 	return ctrl
@@ -91,8 +100,13 @@ UserItems.view = function (ctrl) {
       m("input[type=hidden]", {value: ctrl.item}),
       m('button', {onclick: ctrl.deleteItem.bind(null, item), style: ctrl.isOwner()}, "Delete")
       ]),
+    m('form.editItem', binds(ctrl.item), [
+      m("input[type=hidden]", {value: ctrl.item}),
+      m('button', {onclick: ctrl.editItem.bind(null, item), style: ctrl.isOwner()}, "Edit")
+      ]),
     m('br')]
   }
+
 
   function binds(targetObj, attrs) {
     attrs || (attrs = {})
