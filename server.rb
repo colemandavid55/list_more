@@ -106,7 +106,7 @@ class ListMore::Server < Sinatra::Application
   end
 
   put '/lists/:id' do
-    result = ListMore::UpdateList.run params
+    result = ListMore::UpdateList.run @params
     # should i get all lists again here or "redirect" to get all lists for a user endpoint?
     if result.success?
       {success: true}.to_json
@@ -116,7 +116,7 @@ class ListMore::Server < Sinatra::Application
   end
 
   delete '/lists/:id' do
-    list = ListMore.lists_repo.find_by_id params[:id]
+    list = ListMore.lists_repo.find_by_id @params[:id]
     ListMore.lists_repo.destroy_list list
     # check for success 
   end
@@ -158,7 +158,8 @@ class ListMore::Server < Sinatra::Application
   end
 
   post '/share_list' do
-    shared_list = ListMore::ShareList params
+    shared_list = ListMore::ShareList.run @params
+    puts "this is the shared list data",shared_list
     shared_list_data = ListMore::Serializer.run shared_list
     # will serializer work in this context?
     {

@@ -4,7 +4,15 @@ var App = {}
 
 
 App.vm = {
-	user: m.prop(null)
+	user: m.prop(null),
+	
+	users: m.prop([]),
+  syncUsers: function () {
+    var vm = App.vm
+    m.request({method: "GET", url: "/users", data: {'token': vm.user().token}}).then(function (response) {
+      vm.users(response.users)
+    })
+  }
 }
 
 App.signIn = function (userData) {
@@ -17,6 +25,7 @@ App.signIn = function (userData) {
 	localStorage.setItem('id', userData.id)
 	localStorage.setItem('username', userData.username)
 	localStorage.setItem('token', userData.token)
+	App.vm.syncUsers()
 }
 
 App.attemptSignIn = function () {

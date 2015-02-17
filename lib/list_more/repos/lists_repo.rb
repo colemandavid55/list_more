@@ -53,7 +53,7 @@ module ListMore
         sql = %q[
                 SELECT l.name as name
                 , l.id as id
-                , u.id as user_id
+                , l.user_id as user_id
                 FROM shared_lists s
                 JOIN lists l
                 ON s.list_id = l.id

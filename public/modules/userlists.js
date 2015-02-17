@@ -5,6 +5,10 @@ UserLists.vm = {
   userLists: m.prop([]),
   sharedLists: m.prop([]),
   userId: m.prop(),
+
+  editingList: m.prop(null),
+  sharingList: m.prop(null),
+
   sync: function () {
     var vm = UserLists.vm
     m.request({ method: "GET", url: "/users/" + m.route.param('id') + "/lists" }).then(function (response) {
@@ -18,7 +22,7 @@ UserLists.vm = {
 
 UserLists.controller = function () {
   var ctrl = {
-    list: {
+    newList: {
       name: '',
       user_id: UserLists.vm.userId()
     }
@@ -48,9 +52,100 @@ UserLists.controller = function () {
   }
 
   ctrl.isOwner = function () {
-    response = (localStorage.getItem('currentUserId') == vm.userId()) ?
+    response = (App.vm.user().id == vm.userId()) ?
       "none" : "display:none";
     return response
+  }
+
+  ctrl.listOwner = function (list) {
+    if (m.route.param('id') != App.vm.user().id) {
+      return "display:none"
+    }
+
+    response = (App.vm.user().id == list.user_id) ?
+      "none" : "display:none";
+    return response
+  }
+
+  ctrl.deleteList = function (list, e) {
+    e.preventDefault();
+    console.log("list:",list)
+
+    // Find and remove deleted item
+    
+    var newListArray = Array.reject(vm.lists(), function (l) {
+      return l.id === list.id
+    })
+    vm.lists(newListArray)
+
+    extend(list, {'token': App.vm.user().token})
+
+    m.request({method: "DELETE", url: "/lists/" + list.id, data: list, background: true})//.then(function () {
+    //   vm.items = m.request({method: "GET", url: "/lists/" + vm.listId()});
+    //   m.route("/lists/" + vm.listId())
+    // })
+
+    console.log("item delete clicked")
+  }
+
+  ctrl.submitEditing = function (e) {
+    var list = vm.editingList();
+    e.preventDefault();
+    var newArrayOne = vm.userLists().forEach(function (list_iterator) {
+      if (list.id == list_iterator.id) {
+        list_iterator['name'] = list.name
+      }
+    });
+    var newArrayTwo = vm.sharedLists().forEach(function (list_iterator) {
+      if (list.id == list_iterator.id) {
+        list_iterator['name'] = list.name
+      }
+    });
+
+    extend(list, {'token': App.vm.user().token})
+
+    m.request({method: "PUT", url: "/lists/" + list.id, data: list, background: true})
+    vm.editingList(null)
+  }
+
+  ctrl.submitSharing = function (e) {
+    var list = vm.sharingList();
+    e.preventDefault();
+    extend(list, {'token': App.vm.user().token})
+    console.log("object to be shared/sent to server", list)
+    // m.request to share list in background
+    data = {}
+    if (list.user_id && list.list_id) {
+      data.user_id = list.user_id
+      data.list_id = list.list_id
+      data.token = list.token
+      m.request({method: "POST", url: "/share_list", data: data, background: true})
+    }
+    vm.sharingList(null)
+  }
+
+  ctrl.editList = function (list, e) {
+    e.preventDefault();
+    console.log("Attempting to edit", list, '/lists/' + list.id)
+    UserLists.vm.editingList( extend({}, list) )
+    // m.route('/items/' + item.id)
+  }
+
+  ctrl.cancelEditing = function (e) {
+    e.preventDefault();
+    vm.editingList(null)
+  }
+
+  ctrl.cancelSharing = function (e) {
+    e.preventDefault();
+    vm.sharingList(null)
+  }
+
+  ctrl.shareList = function(list, e) {
+    var listObj = extend({}, list)
+    e.preventDefault();
+    listObj.user_id = null
+    UserLists.vm.sharingList( extend({}, listObj) )
   }
 
   ctrl.selectList = function (userId, listId) {
@@ -75,11 +170,12 @@ UserLists.controller = function () {
 
 UserLists.view = function (ctrl) {
   return m('.lists', [
-    m('div', {}, "This is the lists page"),
-    UserLists.vm.userLists().map(listView),
+    m('div', {}, "This is the user's lists page"), m('br'),
+    UserLists.vm.userLists().map(listView), m('br'),
+    m('div', {}, "These lists have been shared with this user"), m('br'),
     UserLists.vm.sharedLists().map(listView), m('br'), m('br'),
-    m('form.addList', binds(ctrl.list, { style: ctrl.isOwner() }), [
-      m('input[name=name]', {value: ctrl.list.name}),
+    m('form.addList', binds(ctrl.newList, { style: ctrl.isOwner() }), [
+      m('input[name=name]', {value: ctrl.newList.name}),
       m('label', {}, "Name"), m('br'), m('br'),
       m('button', {onclick: ctrl.submit}, "Add List")
       ]),
@@ -88,8 +184,68 @@ UserLists.view = function (ctrl) {
   )
 
   function listView (list) {
-    return [m("a[href='/users/" + list.user_id +"/lists/" + list.id + "']", {config: m.route, onclick: ctrl.selectList.bind(null, list.user_id, list.id)}, list.name),
-    m('br')]
+    var editingList = UserLists.vm.editingList(),
+    sharingList = UserLists.vm.sharingList();
+
+    if (sharingList && sharingList.id == list.id) {
+      return shareListView(list)
+
+    } else if (editingList && editingList.id === list.id) {
+      return editListView(list)
+    }
+
+    else {
+      return showListView(list)
+    }
+  }
+
+
+  function showListView (list) {
+    return m('div.showList', {},
+      [m("a[href='/users/" + list.user_id +"/lists/" + list.id + "']", 
+      {config: m.route, onclick: ctrl.selectList.bind(null, list.user_id, list.id)}, 
+      list.name),
+      m('br'),
+
+      m('button', {onclick: ctrl.deleteList.bind(null, list), style: ctrl.isOwner()}, "Delete"),
+      m('button', {onclick: ctrl.editList.bind(null, list), style: ctrl.isOwner()}, "Edit"),
+      m('button', {onclick: ctrl.shareList.bind(null, list), style: ctrl.listOwner.bind(null, list)()}, "Share"),
+      
+      m('br'),
+      m('br')]
+    )
+  }
+
+
+  function editListView (list) {
+    return m('form.list.editing', binds(UserLists.vm.editingList()), [
+      "Editing List " + list.name, m('br'),
+      m('textarea[name=name]', {value: list.name}), m('br'),
+      m('button', {onclick: ctrl.cancelEditing}, "Cancel"), m('br'),
+      m('button', {onclick: ctrl.submitEditing}, "Submit Changes"),
+      m('br'),
+      m('br'),
+    ])
+  }
+
+  function shareListView (list) {
+    extend(UserLists.vm.sharingList(), {'list_id': list.id})
+    return m('form.list.sharing', binds(UserLists.vm.sharingList()), [
+      "Sharing List " + list.name, m('br'),
+      m('select', { name: 'user_id' }, [
+        App.vm.users().map(function (user) {
+          if (user.id != App.vm.user().id) {
+            return m('option', {value: user.id}, user.username)
+          }
+        })
+      ]), m('br'),
+      m('button', {onclick: ctrl.cancelSharing}, "Cancel"), m('br'),
+      m('button', {onclick: ctrl.submitSharing}, "Share List"),
+      m('br'),
+      m('br')
+
+
+    ])
   }
 
   function binds(targetObj, attrs) {

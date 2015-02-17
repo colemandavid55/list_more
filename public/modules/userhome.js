@@ -1,21 +1,13 @@
 var UserHome = {}
 
 UserHome.vm = {
-  users: m.prop([]),
-  sync: function () {
-    var vm = UserHome.vm
-    m.request({method: "GET", url: "/users", data: {'token': App.vm.user().token}}).then(function (response) {
-      vm.users(response.users)
-
-    });
-  }
 }
 
 
 UserHome.controller = function () {
 	var ctrl = {}
   var vm = UserHome.vm
-  vm.sync()
+  App.vm.syncUsers()
 
 
 
@@ -48,7 +40,7 @@ UserHome.controller = function () {
 UserHome.view = function (ctrl) {
 	return m('.users', [
       m('h1', "this is the users homepage"),
-      UserHome.vm.users().map(userView),
+      App.vm.users().map(userView),
       m("a[href='/']", {config: m.route, onclick: ctrl.logOut}, "Log Out")
     ]
   )
