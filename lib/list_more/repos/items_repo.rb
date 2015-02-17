@@ -14,8 +14,8 @@ module ListMore
       end
 
       def update item
-        sql = %q[UPDATE items SET content = $1 WHERE user_id = $2 and list_id = $3 RETURNING *]
-        result = db.exec(sql, [item.content, item.user_id, item.list_id])
+        sql = %q[UPDATE items SET content = $1 WHERE user_id = $2 and list_id = $3 and id = $4 RETURNING *]
+        result = db.exec(sql, [item.content, item.user_id, item.list_id, item.id])
         build_item result.first
       end
 

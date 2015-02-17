@@ -132,16 +132,16 @@ class ListMore::Server < Sinatra::Application
   end
 
   post '/lists/:list_id/items' do
-    params = JSON.parse request.body.read
-    item = ListMore::CreateItem.run params
+
+    item = ListMore::CreateItem.run @params
     item_data = ListMore::Serializer.run item
     {
       'item' => item_data
     }.to_json
   end
 
-  put '/lists/:list_id/items' do
-    result = ListMore::UpdateItem.run params
+  put '/items/:id' do
+    result = ListMore::UpdateItem.run @params
     if result.success?
       {success: true}.to_json
     else

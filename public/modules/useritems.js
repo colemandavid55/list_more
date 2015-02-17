@@ -4,8 +4,12 @@ UserItems.vm = {
 	items:  m.prop([]),
 	userId: m.prop(),
 	listId: m.prop(),
+  
+  editingItem: m.prop(null),
+
   sync: function () {
     var vm = UserItems.vm
+    console.log("Making request to /lists/" + m.route.param('id'))
     m.request({ method: "GET", url: "/lists/" + m.route.param('id'), data: {'token': App.vm.user().token}}).then(function (response) {
       console.log(response)
       vm.items(response.items)
@@ -16,7 +20,7 @@ UserItems.vm = {
 
 UserItems.controller = function () {
 	var ctrl = {
-    item: {
+    newItem: {
       content: '',
       user_id: UserItems.vm.userId(),
       list_id: UserItems.vm.listId()
@@ -31,9 +35,9 @@ UserItems.controller = function () {
 
   ctrl.submit = function (e) {
     e.preventDefault();
-    m.request({method: "POST", url: "/lists/" + vm.listId() + "/items", data: ctrl.item}).then(function () {
+    m.request({method: "POST", url: "/lists/" + vm.listId() + "/items", data: ctrl.newItem}).then(function () {
       vm.sync()
-      m.route("/lists/" + vm.listId())
+      m.route("/users/" + vm.userId() + "/lists/" + vm.listId())
     }),
 
     console.log("item add clicked")
@@ -71,10 +75,31 @@ UserItems.controller = function () {
     console.log("item delete clicked")
   }
 
+  ctrl.submitEditing = function (e) {
+    var item = vm.editingItem();
+    e.preventDefault();
+    var newArray = vm.items().forEach(function (item_iterator) {
+      if (item.id == item_iterator.id) {
+        item_iterator['content'] = item.content
+      }
+    })
+
+    extend(item, {'token': App.vm.user().token})
+
+    m.request({method: "PUT", url: "/items/" + item.id, data: item, background: true})
+    vm.editingItem(null)
+  }
+
   ctrl.editItem = function (item, e) {
     e.preventDefault();
     console.log("Attempting to edit", item, '/items/' + item.id)
-    m.route('/items/' + item.id)
+    UserItems.vm.editingItem( extend({}, item) )
+    // m.route('/items/' + item.id)
+  }
+
+  ctrl.cancelEditing = function (e) {
+    e.preventDefault();
+    UserItems.vm.editingItem(null)
   }
 
 	return ctrl
@@ -84,9 +109,9 @@ UserItems.view = function (ctrl) {
   return m('.items', [
     m('h1', {}, "This is the items page"),
     UserItems.vm.items().map(itemView), m('br'), m('br'),
-    // m('form.addItem', {style: ctrl.isOwner()}, binds(ctrl.item)}, [
-    m('form.addItem', binds(ctrl.item, { style: ctrl.isOwner() }), [
-      m('textarea[name=content]', {value: ctrl.item.content}), m('br'),
+    // m('form.addItem', {style: ctrl.isOwner()}, binds(ctrl.newItem)}, [
+    m('form.addItem', binds(ctrl.newItem, { style: ctrl.isOwner() }), [
+      m('textarea[name=content]', {value: ctrl.newItem.content}), m('br'),
       m('label', {}, "Item"), m('br'), m('br'),
       m('button', {onclick: ctrl.submit}, "Add Item")
       ]),
@@ -95,16 +120,37 @@ UserItems.view = function (ctrl) {
   )
 
   function itemView (item) {
-    return [m("div.item", {}, item.content),
-    m('form.deleteItem', binds(ctrl.item), [
-      m("input[type=hidden]", {value: ctrl.item}),
-      m('button', {onclick: ctrl.deleteItem.bind(null, item), style: ctrl.isOwner()}, "Delete")
-      ]),
-    m('form.editItem', binds(ctrl.item), [
-      m("input[type=hidden]", {value: ctrl.item}),
-      m('button', {onclick: ctrl.editItem.bind(null, item), style: ctrl.isOwner()}, "Edit")
-      ]),
-    m('br')]
+    var editingItem = UserItems.vm.editingItem()
+    
+    if (editingItem && editingItem.id === item.id) {
+      return editItemView(item)
+    }
+    else {
+      return showItemView(item)
+    }
+  }
+
+  function showItemView (item) {
+    return m("div.item", {}, [
+      item.content,
+      m('br'),
+
+      m('button', {onclick: ctrl.deleteItem.bind(null, item), style: ctrl.isOwner()}, "Delete"),
+      m('button', {onclick: ctrl.editItem.bind(null, item), style: ctrl.isOwner()}, "Edit"),
+      
+      m('br'),
+      m('br')
+    ])
+  }
+  function editItemView (item) {
+    return m('form.item.editing', binds(UserItems.vm.editingItem()), [
+      "Editing Item " + item.content, m('br'),
+      m('textarea[name=content]', {value: item.content}), m('br'),
+      m('button', {onclick: ctrl.cancelEditing}, "Cancel"), m('br'),
+      m('button', {onclick: ctrl.submitEditing}, "Submit Changes"),
+      m('br'),
+      m('br'),
+    ])
   }
 
 
