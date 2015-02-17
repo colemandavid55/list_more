@@ -14,7 +14,6 @@ UserHome.vm = {
 
 UserHome.controller = function () {
 	var ctrl = {}
-
   var vm = UserHome.vm
   vm.sync()
 
