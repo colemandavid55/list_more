@@ -9,7 +9,6 @@ p {
 }
 
 .jumbotron {
-	
 /*	height: 200px;*/
 /*	background-repeat: no-repeat;
 	background-size: cover;
@@ -22,6 +21,10 @@ p {
   	padding: 0px;
 }
 
+.jumbotron .container {
+	padding: 4em 0 3em;
+}
+
 .jumbotron::after {
 	background-image: url('../images/abstract-white-background.jpg');
 	background-size: cover;
@@ -32,9 +35,14 @@ p {
 	bottom: 0;
 	right: 0;
 	position: absolute;
-	z-index: -1;
+	z-index: 0;
 	content: "";
 }
+.jumbotron > * {
+	position: relative;
+	z-index: 1;
+}
+
 #app {
 	text-align: center;
 /*	z-index: 2;*/
