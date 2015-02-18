@@ -42,6 +42,7 @@ UserLists.controller = function () {
     e.preventDefault();
     var data = {}
     extend(ctrl.newList, {'token': App.vm.user().token})
+    extend(ctrl.newList, {'user_id': vm.userId()})
     m.request({method: "POST", url: "users/" + vm.userId() + "/lists", data: ctrl.newList}).then(function () {
       vm.sync()
       m.route("/users/" + vm.userId())
@@ -184,7 +185,7 @@ UserLists.view = function (ctrl) {
     m('div', {}, "These lists have been shared with this user"), m('br'),
     UserLists.vm.sharedLists().map(listView), m('br'), m('br'),
     m('form.addList', binds(ctrl.newList, { style: ctrl.isOwner() }), [
-      m('input[name=name]', {value: ctrl.newList.name}),
+      m('input[name=name]', {value: ctrl.newList.name}), m('br'),
       m('label', {}, "Name"), m('br'), m('br'),
       m('button', {onclick: ctrl.submit}, "Add List")
       ]),

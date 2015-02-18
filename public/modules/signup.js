@@ -42,11 +42,11 @@ SignUp.controller = function () {
 
 SignUp.view = function (ctrl) {
   return m('form.signup', binds(ctrl.user), [
-    m('input[name=username]', {value: ctrl.user.username}),
+    m('input[name=username]', {value: ctrl.user.username}), m('br'),
     m('label', {}, "Username"), m('br'), m('br'),
-    m('input[name=password]', {value: ctrl.user.password}),
+    m('input[name=password]', {value: ctrl.user.password}), m('br'),
     m('label', {}, "Password"),m('br'), m('br'),
-    m('input[name=password_conf]', {value: ctrl.user.password_conf}),
+    m('input[name=password_conf]', {value: ctrl.user.password_conf}), m('br'),
     m('label', {}, "Password Confirmation"), m('br'), m('br'),
     m('button', {onclick: ctrl.submit}, "Sign Up")
   ]);

@@ -39,9 +39,9 @@ SignIn.controller = function () {
 
 SignIn.view = function (ctrl) {
   return m('form.signin', binds(ctrl.user), [
-    m('input[name=username]', {value: ctrl.user.username}),
+    m('input[name=username]', {value: ctrl.user.username}), m('br'),
     m('label', {}, "Username"), m('br'), m('br'),
-    m('input[name=password]', {value: ctrl.user.password}),
+    m('input[name=password]', {value: ctrl.user.password}), m('br'),
     m('label', {}, "Password"), m('br'), m('br'),
     m('button', {onclick: ctrl.submit}, "Sign In")
   ]);

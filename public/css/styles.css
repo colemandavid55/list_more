@@ -3,3 +3,54 @@ padding: 0;
 position: relative;
 top: -10px;
 }
+
+p {
+	float: right;
+}
+
+.jumbotron {
+	
+/*	height: 200px;*/
+/*	background-repeat: no-repeat;
+	background-size: cover;
+	opacity: 0.3;
+	margin-bottom: 0px;*/
+	display: block;
+	position: relative;
+	border: 1px solid #000;
+  	margin: 0px auto;
+  	padding: 0px;
+}
+
+.jumbotron::after {
+	background-image: url('../images/abstract-white-background.jpg');
+	background-size: cover;
+/*	height: 200px;*/
+	opacity: 0.25;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	position: absolute;
+	z-index: -1;
+	content: "";
+}
+#app {
+	text-align: center;
+/*	z-index: 2;*/
+}
+
+.navbar-default {
+	margin-bottom: 0px;
+	background-color: #335475;
+}
+
+.footer {
+	background-color: #335475;
+	color: white;
+}
+
+
+.text-muted {
+	color: white;
+}
