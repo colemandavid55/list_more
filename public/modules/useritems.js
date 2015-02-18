@@ -46,6 +46,7 @@ UserItems.controller = function () {
   ctrl.logOut = function (e) {
     console.log("logout selected")
     localStorage.clear()
+    m.route('/')
   }
 
   ctrl.isOwner = function () {
@@ -115,7 +116,7 @@ UserItems.view = function (ctrl) {
       m('label', {}, "Item"), m('br'), m('br'),
       m('button', {onclick: ctrl.submit}, "Add Item")
       ]),
-    m("a[href='/']", {config: m.route, onclick: ctrl.logOut}, "Log Out")
+    m("a[href='/']", {config: m.route, onclick: App.logOut}, "Log Out")
     ]
   )
 

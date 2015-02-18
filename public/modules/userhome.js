@@ -14,6 +14,7 @@ UserHome.controller = function () {
   ctrl.logOut = function (e) {
     console.log("logout selected")
     localStorage.clear()
+    m.route('/')
   }
 
   ctrl.selectUser = function (userId) {
@@ -41,7 +42,7 @@ UserHome.view = function (ctrl) {
 	return m('.users', [
       m('h1', "this is the users homepage"),
       App.vm.users().map(userView),
-      m("a[href='/']", {config: m.route, onclick: ctrl.logOut}, "Log Out")
+      m("a[href='/']", {config: m.route, onclick: App.logOut}, "Log Out")
     ]
   )
 

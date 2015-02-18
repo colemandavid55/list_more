@@ -21,6 +21,8 @@ UserLists.vm = {
 }
 
 UserLists.controller = function () {
+  console.log("UserLists controller")
+  // debugger
   var ctrl = {
     newList: {
       name: '',
@@ -38,7 +40,9 @@ UserLists.controller = function () {
 
   ctrl.submit = function (e) {
     e.preventDefault();
-    m.request({method: "POST", url: "users/" + vm.userId() + "/lists", data: ctrl.list}).then(function () {
+    var data = {}
+    extend(ctrl.newList, {'token': App.vm.user().token})
+    m.request({method: "POST", url: "users/" + vm.userId() + "/lists", data: ctrl.newList}).then(function () {
       vm.sync()
       m.route("/users/" + vm.userId())
     });
@@ -49,6 +53,7 @@ UserLists.controller = function () {
   ctrl.logOut = function (e) {
     console.log("logout selected")
     localStorage.clear()
+    m.route('/')
   }
 
   ctrl.isOwner = function () {
@@ -73,10 +78,14 @@ UserLists.controller = function () {
 
     // Find and remove deleted item
     
-    var newListArray = Array.reject(vm.lists(), function (l) {
+    var newUserListArray = Array.reject(vm.userLists(), function (l) {
       return l.id === list.id
     })
-    vm.lists(newListArray)
+    var newSharedListArray = Array.reject(vm.sharedLists(), function (l) {
+      return l.id === list.id
+    })
+    vm.userLists(newUserListArray)
+    vm.sharedLists(newSharedListArray)
 
     extend(list, {'token': App.vm.user().token})
 
@@ -179,7 +188,7 @@ UserLists.view = function (ctrl) {
       m('label', {}, "Name"), m('br'), m('br'),
       m('button', {onclick: ctrl.submit}, "Add List")
       ]),
-    m("a[href='/']", {config: m.route, onclick: ctrl.logOut}, "Log Out")
+    m("a[href='/']", {config: m.route, onclick: App.logOut}, "Log Out")
     ]
   )
 

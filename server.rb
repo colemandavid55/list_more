@@ -64,7 +64,7 @@ class ListMore::Server < Sinatra::Application
 
   post '/logout' do
 
-    ListMore.sessions_repo.delete @params['token']
+    ListMore.sessions_repo.destroy @params['token']
   end
 
   get '/users' do
@@ -97,6 +97,7 @@ class ListMore::Server < Sinatra::Application
   end
 
   post '/users/:id/lists' do
+    puts "endpoint hit"
     # params = JSON.parse request.body.read
     list = ListMore::CreateList.run @params
     list_data = ListMore::Serializer.run list
@@ -116,7 +117,7 @@ class ListMore::Server < Sinatra::Application
   end
 
   delete '/lists/:id' do
-    list = ListMore.lists_repo.find_by_id @params[:id]
+    list = ListMore.lists_repo.find_by_id @params['id']
     ListMore.lists_repo.destroy_list list
     # check for success 
   end

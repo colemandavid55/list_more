@@ -9,9 +9,15 @@ App.vm = {
 	users: m.prop([]),
   syncUsers: function () {
     var vm = App.vm
-    m.request({method: "GET", url: "/users", data: {'token': vm.user().token}}).then(function (response) {
-      vm.users(response.users)
-    })
+    if(vm.user()) {
+    	console.log("Syncing users")
+	    m.request({method: "GET", url: "/users", data: {'token': vm.user().token}}).then(function (response) {
+	      vm.users(response.users)
+	    })
+	  } else {
+    	console.log("Redirecting to /")
+	  	m.route('/')
+	  }
   }
 }
 
@@ -41,4 +47,11 @@ App.attemptSignIn = function () {
 	else {
 		m.route('/')
 	}
+}
+
+App.logOut = function() {
+	m.request({method: "POST", url: "/logout", data: App.vm.user(), background: true})
+	App.vm.user(null)
+	localStorage.clear()
+	m.route('/')
 }
