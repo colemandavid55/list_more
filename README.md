@@ -33,6 +33,24 @@ Software Design
 Entities: 
 Within the application, there exist three entities. User, List, and Item. Each of these is a subclass of the module Entities and inherits from the OpenStruct class in Ruby. By making each entity an OpenStruct, we can dynamically add both attributes and methods, thus allowing the code to operate independently of both the repositories and the server. Use of the entity model, as opposed to dealing with ordinary ruby hashes, is essential when it comes to the encapsulation of both data and methods. For example, the user entity has two methods (update_password and has_password?). In this way, data about a user, coming from both the server and the database, is delivered in a consistent format with these specific methods included.
 
+					module ListMore
+					  module Entities    
+					    class User < OpenStruct
+
+					      def update_password password
+					        self.password_digest = BCrypt::Password.create(password)
+					      end
+
+					      def has_password? password
+					        x = BCrypt::Password.new(self.password_digest)
+					        x == password
+					      end
+					      
+					    end
+					  end
+					end
+
+
 Repositories: 
 There are separate repositories for users, lists, items, shared_lists and sessions. The file repo_helper.rb defines a connection to the database and stores it in an instance variable. This allows each repository to contain code that relates directly to the repository to which it connects, making calls to a variable set outside each individual repository class. For users, lists, and items, each repository contains a build_entity method, where entity could be user. By returning the data this way, one can decouple the logic associated with using data returned from the server by ensuring consistency and predictable attributes from objects returned in this way.
 
