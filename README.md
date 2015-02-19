@@ -53,7 +53,7 @@ end
 
 #### Repositories
 
-There are separate repositories for users, lists, items, shared_lists and sessions. The file repo_helper.rb defines a connection to the database and stores it in an instance variable. This allows each repository to contain code that relates directly to the repository to which it connects, making calls to a variable set outside each individual repository class. For users, lists, and items, each repository contains a build_entity method, where entity could be user. By returning the data this way, one can decouple the logic associated with using data returned from the server by ensuring consistency and predictable attributes from objects returned in this way.
+There are separate repositories for users, lists, items, shared_lists and sessions. The file repo_helper.rb defines a connection to the database and stores it in an instance variable. This allows each repository to contain code that relates directly to the repository to which it connects, making calls to a variable set outside each individual repository class. For users, lists, and items, each repository contains a build_entity method, where entity could be user. By returning the data this way, one can decouple the logic associated with using data returned from the server by ensuring consistency and predictable attributes from objects returned in this way. The code below is responsible for establishing a connection with the database (production or development), allowing all repos to use the instance variable stored in @db.
 
 ```ruby
   module ListMore
