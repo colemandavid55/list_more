@@ -25,7 +25,7 @@ A User can...
 
 1. Sign up and sign in
 2. Create/read/update/delete their own lists and items
-3. Read another userâ€™s lists and items
+3. Read another user's lists and items
 4. Share a list with another user
 
 ### Software Design
