@@ -240,15 +240,16 @@ UserLists.view = function (ctrl) {
 
   function shareListView (list) {
     extend(UserLists.vm.sharingList(), {'list_id': list.id})
+    var userList = App.vm.users().map(function (user) {
+      if (user.id != App.vm.user().id) {
+        return m('option', {value: user.id}, user.username)
+      }
+    });
+    userList.unshift(m('option', {value: null}, " "));
     return m('form.list.sharing', binds(UserLists.vm.sharingList()), [
       "Sharing List " + list.name, m('br'),
-      m('select', { name: 'user_id' }, [
-        App.vm.users().map(function (user) {
-          if (user.id != App.vm.user().id) {
-            return m('option', {value: user.id}, user.username)
-          }
-        })
-      ]), m('br'),
+      m('select', { name: 'user_id' }, userList),
+      m('br'),
       m('button', {onclick: ctrl.cancelSharing}, "Cancel"), m('br'),
       m('button', {onclick: ctrl.submitSharing}, "Share List"),
       m('br'),
