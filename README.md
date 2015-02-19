@@ -18,6 +18,7 @@ This application uses the following:
 8.  JSON
 9.  Rest-client
 10. Pry-byebug (for debugging)
+11. Github/git
 
 ### User Stories
 
