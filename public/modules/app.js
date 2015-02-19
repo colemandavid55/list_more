@@ -32,6 +32,7 @@ App.signIn = function (userData) {
 	localStorage.setItem('username', userData.username)
 	localStorage.setItem('token', userData.token)
 	App.vm.syncUsers()
+	m.route('/users');
 }
 
 App.attemptSignIn = function () {
