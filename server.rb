@@ -9,8 +9,6 @@ class ListMore::Server < Sinatra::Application
   set :bind, '0.0.0.0'
 
   before do
-    # request.body.rewind
-
     @body = request.body.read
     @body = "{}" if @body.length == 0
     @params = JSON.parse(@body)
@@ -44,10 +42,7 @@ class ListMore::Server < Sinatra::Application
   end
 
   post '/signin' do
-    # json = request.body.read
-    # puts json
-    # params = JSON.parse(json)
-    # params = JSON.parse(request.body.rewind)
+
     data = {}
     result = ListMore::SignIn.run @params
 
